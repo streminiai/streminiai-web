@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 import Script from "next/script"
 import { Suspense } from "react"
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
     images: ["/stremini-twitter-card.jpg"],
     creator: "@stremini",
   },
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -133,7 +134,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Suspense fallback={null}>{children}</Suspense>
+        <Suspense fallback={null}>{children} <Analytics /></Suspense>
       </body>
     </html>
   )
