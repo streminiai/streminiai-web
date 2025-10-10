@@ -21,7 +21,7 @@ export function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-              <Link href="#waitlist">Start Free Trial</Link>
+              <Link href="#waitlist">Join Waitlist</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="#features">Explore Features</Link>
@@ -30,10 +30,10 @@ export function Hero() {
 
           <div className="mt-8 grid grid-cols-2 gap-4 text-sm text-muted-foreground sm:grid-cols-4">
             <div className="rounded-md border border-border p-3">
-              <span className="block text-foreground">50,000+</span> users
+              <span className="block text-foreground">Pre‑launch</span> status
             </div>
             <div className="rounded-md border border-border p-3">
-              <span className="block text-foreground">4.8/5</span> rating
+              <span className="block text-foreground">No ratings</span> yet
             </div>
             <div className="rounded-md border border-border p-3">
               <span className="block text-foreground">Bank-level</span> security
