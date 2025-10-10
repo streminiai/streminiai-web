@@ -1,4 +1,3 @@
-import { NavbarTop } from "@/components/navbar-top"
 import { MobileBottomNav } from "@/components/mobile-bottom-nav"
 import { Hero } from "@/components/sections/hero"
 import { HowItWorks } from "@/components/sections/how-it-works"
@@ -14,7 +13,6 @@ import { Footer } from "@/components/footer"
 export default function Page() {
   return (
     <>
-      <NavbarTop />
       <main className="min-h-screen">
         <section id="home" aria-label="Hero">
           <Hero />

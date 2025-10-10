@@ -7,6 +7,7 @@ import Script from "next/script"
 import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { NavbarTop } from "@/components/navbar-top"
 
 export const metadata: Metadata = {
   title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
@@ -140,7 +141,7 @@ export default function RootLayout({
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <Suspense fallback={null}>{children} <Analytics />
-
+          <NavbarTop />
           <GoogleAnalytics gaId={GA_ID ?? ''} />
 
         </Suspense>
