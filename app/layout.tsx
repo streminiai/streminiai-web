@@ -140,8 +140,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Suspense fallback={null}>{children} <Analytics />
-          <NavbarTop />
+        <Suspense fallback={null}><NavbarTop />{children} <Analytics />
+
           <GoogleAnalytics gaId={GA_ID ?? ''} />
 
         </Suspense>
