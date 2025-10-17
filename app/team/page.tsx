@@ -96,7 +96,7 @@ export default function TeamPage() {
         <div className="mt-16 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 p-8 text-center">
           <h3 className="mb-2 text-2xl font-bold text-foreground">Join Our Growing Team</h3>
           <p className="mb-6 text-muted-foreground">
-            We're always looking for talented individuals to help us build the future
+            We&apos;re always looking for talented individuals to help us build the future
           </p>
           <a
             href="#waitlist"
