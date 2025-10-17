@@ -20,6 +20,7 @@ export function NavbarTop() {
             ["Gallery", "#gallery"],
             ["Pricing", "#pricing"],
             ["About", "/about"],
+            ["Team", "/team"],
             ["FAQ", "#faq"],
           ].map(([label, href]) => (
             <Link key={label} href={href} className="text-sm hover:text-primary">

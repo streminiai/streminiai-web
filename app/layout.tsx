@@ -6,11 +6,12 @@ import "./globals.css"
 import Script from "next/script"
 import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
-import { GoogleAnalytics } from '@next/third-parties/google';
 import { NavbarTop } from "@/components/navbar-top"
 
 export const metadata: Metadata = {
   title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
+  verification: {
+    google: "nWXMsweHFRI-qkOCXhbBfFYzqoLuCkadvsHdRBBIfeTss7ZjGgsvwHY"},
   description:
     "Stremini is an advanced floating AI assistant for digital security and productivity. Smart protection, voice automation, AI keyboard, and more.",
   keywords: [
@@ -68,6 +69,7 @@ export default function RootLayout({
             } catch (_) {}
           `}
         </Script>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
 
         <script
           type="application/ld+json"
@@ -141,9 +143,6 @@ export default function RootLayout({
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <Suspense fallback={null}><NavbarTop />{children} <Analytics />
-
-          <GoogleAnalytics gaId={GA_ID ?? ''} />
-
         </Suspense>
       </body>
     </html>

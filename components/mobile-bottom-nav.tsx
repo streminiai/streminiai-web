@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Sparkles, Images, Tag, HelpCircle, Inbox } from "lucide-react"
+import { Home, Sparkles, Images, Tag, HelpCircle, Inbox, Users } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useState } from "react"
 
@@ -11,6 +11,7 @@ const items = [
   { label: "Gallery", href: "#gallery", icon: Images },
   { label: "Pricing", href: "#pricing", icon: Tag },
   { label: "FAQ", href: "#faq", icon: HelpCircle },
+  { label: "Team", href: "/team", icon: Users },
   { label: "Waitlist", href: "#waitlist", icon: Inbox },
 ]
 
