@@ -15,7 +15,7 @@ export function NavbarTop() {
 
         <div className="hidden items-center gap-6 md:flex">
           {[
-            ["Home", "#home"],
+            ["Home", "/home"],
             ["Features", "#features"],
             ["Gallery", "#gallery"],
             ["Pricing", "#pricing"],

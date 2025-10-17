@@ -6,7 +6,7 @@ import { ThemeToggle } from "./theme-toggle"
 import { useState } from "react"
 
 const items = [
-  { label: "Home", href: "#home", icon: Home },
+  { label: "Home", href: "/home", icon: Home },
   { label: "Features", href: "#features", icon: Sparkles },
   { label: "Gallery", href: "#gallery", icon: Images },
   { label: "Pricing", href: "#pricing", icon: Tag },
