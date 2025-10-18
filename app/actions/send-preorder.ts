@@ -1,37 +1,48 @@
 "use server"
 
+import emailjs from '@emailjs/nodejs'
 
-export async function sendPreorderEmail(email: string, wishlistItems: Array<{ feature: string; description: string }>) {
-    const submissionTime = new Date().toLocaleString(); 
+export async function sendPreorderEmail(
+  email: string,
+  wishlistItems: Array<{ feature: string; description: string }>
+) {
+  const submissionTime = new Date().toLocaleString()
+
   try {
-    
-    const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        service_id: process.env.EMAILJS_SERVICE_ID,
-        template_id: process.env.EMAILJS_TEMPLATE_ID,
-        user_id: process.env.EMAILJS_PUBLIC_KEY,
-        template_params: {
-          to_email: email,
-          user_email: email,
-          wishlist_items: wishlistItems.map((item) => `${item.feature}: ${item.description}`).join("\n"),
-          message: `I'm interested in these features for Stremini AI:\n\n${wishlistItems.map((item) => `• ${item.feature}${item.description ? ": " + item.description : ""}`).join("\n")}`,
-          name: email,  
-          time: submissionTime, 
-        },
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to send email")
+    // Check if env vars exist
+    if (!process.env.EMAILJS_SERVICE_ID || !process.env.EMAILJS_TEMPLATE_ID || !process.env.EMAILJS_PUBLIC_KEY || !process.env.EMAILJS_PRIVATE_KEY) {
+      console.error("Missing EmailJS environment variables")
+      return { success: false, error: "Configuration error" }
     }
 
+    const response = await emailjs.send(
+      process.env.EMAILJS_SERVICE_ID,
+      process.env.EMAILJS_TEMPLATE_ID,
+      {
+        to_email: email,
+        user_email: email,
+        name: email,
+        time: submissionTime,
+        message: `I'm interested in these features for Stremini AI:\n\n${wishlistItems
+          .map((item) => `• ${item.feature}${item.description ? ": " + item.description : ""}`)
+          .join("\n")}`,
+        wishlist_items: wishlistItems
+          .map((item) => `${item.feature}${item.description ? ": " + item.description : ""}`)
+          .join("\n"),
+      },
+      {
+        publicKey: process.env.EMAILJS_PUBLIC_KEY,
+        privateKey: process.env.EMAILJS_PRIVATE_KEY, // Required for server-side
+      }
+    )
+
+    console.log("Email sent successfully:", response)
     return { success: true }
   } catch (error) {
     console.error("Preorder email error:", error)
-    return { success: false, error: "Failed to send preorder email" }
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Failed to send preorder email" 
+    }
   }
 }

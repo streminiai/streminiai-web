@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
     "@geist-ui/react": "^2.2.5",
     "@hookform/resolvers": "^3.10.0",
     "@next/third-parties": "^15.5.4",
