@@ -6,11 +6,12 @@ export async function sendPreorderEmail(
   email: string,
   wishlistItems: Array<{ feature: string; description: string }>
 ) {
-  const submissionTime = new Date().toLocaleString()
+  // Generate timestamp on server only (not in template)
+  const submissionTime = new Date().toISOString() // Use ISO format for consistency
 
   try {
-    // Check if env vars exist
-    if (!process.env.EMAILJS_SERVICE_ID || !process.env.EMAILJS_TEMPLATE_ID || !process.env.EMAILJS_PUBLIC_KEY || !process.env.EMAILJS_PRIVATE_KEY) {
+    if (!process.env.EMAILJS_SERVICE_ID || !process.env.EMAILJS_TEMPLATE_ID || 
+        !process.env.EMAILJS_PUBLIC_KEY || !process.env.EMAILJS_PRIVATE_KEY) {
       console.error("Missing EmailJS environment variables")
       return { success: false, error: "Configuration error" }
     }
@@ -22,7 +23,10 @@ export async function sendPreorderEmail(
         to_email: email,
         user_email: email,
         name: email,
-        time: submissionTime,
+        time: new Date().toLocaleString('en-US', { 
+          dateStyle: 'medium', 
+          timeStyle: 'short' 
+        }),
         message: `I'm interested in these features for Stremini AI:\n\n${wishlistItems
           .map((item) => `• ${item.feature}${item.description ? ": " + item.description : ""}`)
           .join("\n")}`,
@@ -32,7 +36,7 @@ export async function sendPreorderEmail(
       },
       {
         publicKey: process.env.EMAILJS_PUBLIC_KEY,
-        privateKey: process.env.EMAILJS_PRIVATE_KEY, // Required for server-side
+        privateKey: process.env.EMAILJS_PRIVATE_KEY,
       }
     )
 
