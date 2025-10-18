@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import emailjs from '@emailjs/browser'
 import { Heart, Trash2, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,10 @@ export default function WishlistPage() {
     const [email, setEmail] = useState("")
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState<"idle" | "ok" | "err">("idle")
+
+    useEffect(() => {
+        emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!)
+    }, [])
 
     const addItem = () => {
         if (feature.trim()) {
@@ -74,6 +78,12 @@ export default function WishlistPage() {
             setLoading(false)
         }
     }
+
+    console.log('EmailJS Config:', {
+        serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        templateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+        publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+    });
 
     return (
         <main className="min-h-screen bg-background pt-20 pb-24">
