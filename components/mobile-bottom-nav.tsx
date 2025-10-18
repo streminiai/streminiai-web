@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Sparkles, Images, Tag, HelpCircle, Inbox, Users } from "lucide-react"
+import { Home, Inbox, Users } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useState } from "react"
 
