@@ -1,7 +1,7 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import emailjs from '@emailjs/browser'
 import { Heart, Trash2, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,17 +20,11 @@ export default function WishlistPage() {
     const [email, setEmail] = useState("")
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState<"idle" | "ok" | "err">("idle")
-    const [mounted, setMounted] = useState(false)
-
-    // Fix hydration issue
-    useEffect(() => {
-        setMounted(true)
-    }, [])
 
     const addItem = () => {
         if (feature.trim()) {
             const newItem: WishlistItem = {
-                id: `${Date.now()}-${Math.random()}`, // More unique ID
+                id: `${Date.now()}-${Math.random()}`,
                 feature: feature.trim(),
                 description: description.trim(),
             }
@@ -52,31 +46,33 @@ export default function WishlistPage() {
         setStatus("idle")
 
         try {
-            // Replace with your actual server action import
-            // const result = await sendPreorderEmail(email, items)
+            await emailjs.send(
+                process.env.EMAILJS_SERVICE_ID!,
+                process.env.EMAILJS_TEMPLATE_ID!,
+                {
+                    to_email: email,
+                    user_email: email,
+                    name: email,
+                    time: new Date().toLocaleString(),
+                    message: `I'm interested in these features for Stremini AI:\n\n${items
+                        .map((item) => `• ${item.feature}${item.description ? ": " + item.description : ""}`)
+                        .join("\n")}`,
+                    wishlist_items: items
+                        .map((item) => `${item.feature}${item.description ? ": " + item.description : ""}`)
+                        .join("\n"),
+                },
+                process.env.EMAILJS_PUBLIC_KEY
+            )
 
-            // Simulated API call for demo
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            const result = { success: true }
-
-            if (result.success) {
-                setStatus("ok")
-                setEmail("")
-                setItems([])
-            } else {
-                setStatus("err")
-            }
+            setStatus("ok")
+            setEmail("")
+            setItems([])
         } catch (error) {
             console.error("Preorder error:", error)
             setStatus("err")
         } finally {
             setLoading(false)
         }
-    }
-
-    // Prevent hydration mismatch
-    if (!mounted) {
-        return null
     }
 
     return (
@@ -89,7 +85,7 @@ export default function WishlistPage() {
                     </div>
                     <h1 className="text-balance text-4xl font-bold md:text-5xl">Feature Wishlist</h1>
                     <p className="mt-2 text-muted-foreground">
-                        Tell us what features you&apos;d love to see in Stremini AI. Preorder now and get early access!
+                        Tell us what features you'd love to see in Stremini AI. Preorder now and get early access!
                     </p>
                 </div>
 
@@ -194,13 +190,13 @@ export default function WishlistPage() {
                                 )}
                             </Button>
                             <p className="text-xs text-muted-foreground">
-                                We&apos;ll notify you when these features are ready and give you early access!
+                                We'll notify you when these features are ready and give you early access!
                             </p>
                         </form>
 
                         {status === "ok" && (
                             <div className="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                                ✓ Thanks! We&apos;ve received your preorder. Check your email for confirmation.
+                                ✓ Thanks! We've received your preorder. Check your email for confirmation.
                             </div>
                         )}
                         {status === "err" && (
