@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Inbox, Users } from "lucide-react"
+import { Home, Heart, Users } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useState } from "react"
 
@@ -9,7 +9,8 @@ const items = [
   { label: "Home", href: "/", icon: Home },
   { label: "Team", href: "/team", icon: Users },
   { label: "About", href: "/about", icon: Users },
-  { label: "Waitlist", href: "#waitlist", icon: Inbox },
+  { label: "Wishlist", href: "/wishlist", icon: Heart },
+
 ]
 
 export function MobileBottomNav() {
