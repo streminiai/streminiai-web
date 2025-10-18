@@ -74,7 +74,7 @@ export default function WishlistPage() {
           </div>
           <h1 className="text-balance text-4xl font-bold md:text-5xl">Feature Wishlist</h1>
           <p className="mt-2 text-muted-foreground">
-            Tell us what features you'd love to see in Stremini AI. Preorder now and get early access!
+            Tell us what features you&apos;d love to see in Stremini AI. Preorder now and get early access!
           </p>
         </div>
 
@@ -179,13 +179,13 @@ export default function WishlistPage() {
                 )}
               </Button>
               <p className="text-xs text-muted-foreground">
-                We'll notify you when these features are ready and give you early access!
+                We&apos;ll notify you when these features are ready and give you early access!
               </p>
             </form>
 
             {status === "ok" && (
               <div className="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                ✓ Thanks! We've received your preorder. Check your email for confirmation.
+                ✓ Thanks! We&apos;ve received your preorder. Check your email for confirmation.
               </div>
             )}
             {status === "err" && (
