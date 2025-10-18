@@ -18,7 +18,6 @@ export function NavbarTop() {
             ["Home", "/"],
             ["Features", "#features"],
             ["About", "/about"],
-            ["Wishlist", "/wishlist"],
             ["Team", "/team"],
           ].map(([label, href]) => (
             <Link key={label} href={href} className="text-sm hover:text-primary">
@@ -27,7 +26,7 @@ export function NavbarTop() {
           ))}
 
           <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-            <Link href="#waitlist">Join Waitlist</Link>
+            <Link href="/wishlist">Join Wishlist</Link>
           </Button>
 
           <ThemeToggle />
