@@ -27,9 +27,8 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               onClick={() => setActive(item.href)}
-              className={`flex flex-col items-center justify-center gap-1 p-2 text-xs ${
-                isActive ? "text-primary" : "text-muted-foreground"
-              }`}
+              className={`flex flex-col items-center justify-center gap-1 p-2 text-xs ${isActive ? "text-primary" : "text-muted-foreground"
+                }`}
               aria-current={isActive ? "page" : undefined}
             >
               <Icon size={18} />
