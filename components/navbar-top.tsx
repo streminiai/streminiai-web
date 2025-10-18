@@ -15,13 +15,10 @@ export function NavbarTop() {
 
         <div className="hidden items-center gap-6 md:flex">
           {[
-            ["Home", "/home"],
+            ["Home", "/"],
             ["Features", "#features"],
-            ["Gallery", "#gallery"],
-            ["Pricing", "#pricing"],
             ["About", "/about"],
             ["Team", "/team"],
-            ["FAQ", "#faq"],
           ].map(([label, href]) => (
             <Link key={label} href={href} className="text-sm hover:text-primary">
               {label}
