@@ -47,8 +47,8 @@ export default function WishlistPage() {
 
         try {
             await emailjs.send(
-                process.env.EMAILJS_SERVICE_ID!,
-                process.env.EMAILJS_TEMPLATE_ID!,
+                process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+                process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
                 {
                     to_email: email,
                     user_email: email,
@@ -61,7 +61,7 @@ export default function WishlistPage() {
                         .map((item) => `${item.feature}${item.description ? ": " + item.description : ""}`)
                         .join("\n"),
                 },
-                process.env.EMAILJS_PUBLIC_KEY
+                process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
             )
 
             setStatus("ok")
