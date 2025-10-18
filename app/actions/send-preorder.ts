@@ -6,8 +6,7 @@ export async function sendPreorderEmail(
   email: string,
   wishlistItems: Array<{ feature: string; description: string }>
 ) {
-  // Generate timestamp on server only (not in template)
-  const submissionTime = new Date().toISOString() // Use ISO format for consistency
+
 
   try {
     if (!process.env.EMAILJS_SERVICE_ID || !process.env.EMAILJS_TEMPLATE_ID || 
