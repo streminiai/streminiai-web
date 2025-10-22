@@ -8,7 +8,7 @@ export function NavbarTop() {
   return (
     <header className="sticky top-0 z-40 bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        <Link href="#home" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <span className="inline-block h-6 w-6 rounded-md bg-gradient-to-br from-primary to-accent" aria-hidden />
           <span className="text-sm font-semibold tracking-wide">Stremini</span>
         </Link>
@@ -16,7 +16,7 @@ export function NavbarTop() {
         <div className="hidden items-center gap-6 md:flex">
           {[
             ["Home", "/"],
-            ["Features", "#features"],
+            ["Features", "/features"],
             ["About", "/about"],
             ["Team", "/team"],
           ].map(([label, href]) => (
