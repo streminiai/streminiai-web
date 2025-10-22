@@ -8,7 +8,6 @@ import { Testimonials } from "@/components/sections/testimonials"
 import { About } from "@/components/sections/about"
 import { FAQ } from "@/components/sections/faq"
 import { Waitlist } from "@/components/sections/waitlist"
-import { Footer } from "@/components/footer"
 
 export default function Page() {
   return (
