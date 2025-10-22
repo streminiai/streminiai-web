@@ -41,12 +41,15 @@ const teamData = {
       "Vansh Sharma",
       "Zh4r",
       "Aslan Yaseer",
+      "Devansh Doshi",
     ],
   },
   research: {
     title: "Research & Operations Team",
     icon: Briefcase,
-    members: ["Mehridin Yo'ldoshev (Head)", "KISHAN MARISAM", "Abhinab Mishra", "Pankaj"],
+    members: ["Mehridin Yo'ldoshev (Head)", "KISHAN MARISAM", "Abhinab Mishra", "Pankaj",
+      "Devansh Doshi",
+    ],
   },
 }
 
@@ -99,7 +102,7 @@ export default function TeamPage() {
             We&apos;re always looking for talented individuals to help us build the future
           </p>
           <a
-            href="#waitlist"
+            href="/wishlist"
             className="inline-block rounded-lg bg-gradient-to-tr from-primary to-accent px-6 py-2 font-medium text-primary-foreground transition-all hover:shadow-lg"
           >
             Get in Touch

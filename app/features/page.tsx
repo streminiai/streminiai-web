@@ -122,7 +122,7 @@ export default function FeaturesPage() {
             Join our waitlist to get early access and be among the first to transform your productivity.
           </p>
           <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-            <Link href="/waitlist">Join Waitlist</Link>
+            <Link href="/wishlist">Join Waitlist</Link>
           </Button>
         </div>
       </div>

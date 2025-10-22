@@ -21,7 +21,7 @@ export function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-              <Link href="#waitlist">Join Waitlist</Link>
+              <Link href="/wishlist">Join Waitlist</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="#features">Explore Features</Link>
