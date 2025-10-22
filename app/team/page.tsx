@@ -1,6 +1,7 @@
 "use client"
 
 import { Users, Zap, Megaphone, Briefcase } from "lucide-react"
+import Link from "next/link"
 
 const teamData = {
   founder: {
@@ -101,12 +102,12 @@ export default function TeamPage() {
           <p className="mb-6 text-muted-foreground">
             We&apos;re always looking for talented individuals to help us build the future
           </p>
-          <a
+          <Link
             href="/wishlist"
             className="inline-block rounded-lg bg-gradient-to-tr from-primary to-accent px-6 py-2 font-medium text-primary-foreground transition-all hover:shadow-lg"
           >
             Get in Touch
-          </a>
+          </Link>
         </div>
       </div>
     </main>
