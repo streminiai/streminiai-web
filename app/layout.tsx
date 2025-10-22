@@ -7,11 +7,13 @@ import Script from "next/script"
 import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
 import { NavbarTop } from "@/components/navbar-top"
+import { Footer } from "@/components/footer"
 
 export const metadata: Metadata = {
   title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
   verification: {
-    google: "nWXMsweHFRI-qkOCXhbBfFYzqoLuCkadvsHdRBBIfeTss7ZjGgsvwHY"},
+    google: "nWXMsweHFRI-qkOCXhbBfFYzqoLuCkadvsHdRBBIfeTss7ZjGgsvwHY"
+  },
   description:
     "Stremini is an advanced floating AI assistant for digital security and productivity. Smart protection, voice automation, AI keyboard, and more.",
   keywords: [
@@ -54,12 +56,12 @@ export default function RootLayout({
 }>) {
 
   const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-  const GTM_ID = "GTM-5CK2HCQP"; 
+  const GTM_ID = "GTM-5CK2HCQP";
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-      <Script
+        <Script
           id="google-tag-manager"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
@@ -85,7 +87,7 @@ export default function RootLayout({
           `}
         </Script>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-        
+
 
         <script
           type="application/ld+json"
@@ -158,7 +160,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-      <noscript>
+        <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
             height="0"
@@ -166,7 +168,7 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           ></iframe>
         </noscript>
-        <Suspense fallback={null}><NavbarTop />{children} <Analytics />
+        <Suspense fallback={null}><NavbarTop />{children}      <Footer /> <Analytics />
         </Suspense>
       </body>
     </html>

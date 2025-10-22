@@ -50,7 +50,6 @@ export default function Page() {
           <Waitlist />
         </section>
       </main>
-      <Footer />
       <MobileBottomNav />
     </>
   )
