@@ -26,10 +26,8 @@ const teamData = {
       "SHUBHAM",
       "Valiant Joe",
       "Tushar",
-      "Rodel",
       "Sanju",
       "Hasan Rezaee",
-      "Antonio Biondo Lee",
     ],
   },
   marketing: {
