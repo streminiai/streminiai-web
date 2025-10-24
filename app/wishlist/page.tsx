@@ -136,11 +136,11 @@ export default function WishlistPage() {
                             </div>
                             <h3 className="text-2xl font-bold">Preorder Successful! 🎉</h3>
                             <p className="text-muted-foreground">
-                                We've received your feature requests. Check your email for confirmation and early access details!
+                                We&apos;ve received your feature requests. Check your email for confirmation and early access details!
                             </p>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Sparkles className="h-4 w-4 text-primary" />
-                                <span>You'll be among the first to try these features</span>
+                                <span>You&apos;ll be among the first to try these features</span>
                             </div>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ export default function WishlistPage() {
                         Feature Wishlist
                     </h1>
                     <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Choose the features you'd love to see in Stremini AI. Preorder now and get early access!
+                        Choose the features you&apos;d love to see in Stremini AI. Preorder now and get early access!
                     </p>
                 </div>
 
@@ -328,7 +328,7 @@ export default function WishlistPage() {
                             </Button>
                             
                             <p className="text-xs text-center text-muted-foreground">
-                                🎁 We'll notify you when these features are ready and give you exclusive early access!
+                                🎁 We&apos;ll notify you when these features are ready and give you exclusive early access!
                             </p>
                         </div>
 
