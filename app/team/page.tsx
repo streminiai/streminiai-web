@@ -36,17 +36,15 @@ const teamData = {
     members: [
       "Edmund Mylliem Umlong (Marketing Head)",
       "Restant",
-      "Devesh Chhipa",
       "Vansh Sharma",
       "Zh4r",
-      "Aslan Yaseer",
       "Devansh Doshi",
     ],
   },
   research: {
     title: "Research & Operations Team",
     icon: Briefcase,
-    members: ["Mehridin Yo'ldoshev (Head)", "KISHAN MARISAM", "Abhinab Mishra", "Pankaj",
+    members: ["Mehridin Yo'ldoshev (Head)","Alzali","Zhar", "Abhinab Mishra", "Pankaj",
       "Devansh Doshi",
     ],
   },
