@@ -17,7 +17,7 @@ export function NavbarTop() {
           />
           <span className="text-sm font-semibold tracking-wide">Stremini</span>
         </Link>
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-5 md:flex">
           {[
             ["Home", "/"],
             ["Features", "/features"],
@@ -25,11 +25,11 @@ export function NavbarTop() {
             ["About", "/about"],
             ["Team", "/team"],
           ].map(([label, href]) => (
-            <Link key={label} href={href} className="text-sm hover:text-primary">
+            <Link key={label} href={href} className="text-sm hover:text-primary whitespace-nowrap">
               {label}
             </Link>
           ))}
-          <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
+          <Button asChild className="ml-2 bg-gradient-to-tr from-primary to-accent text-primary-foreground">
             <Link href="/wishlist">Join Wishlist</Link>
           </Button>
         </div>
