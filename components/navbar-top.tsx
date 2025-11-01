@@ -21,6 +21,7 @@ export function NavbarTop() {
           {[
             ["Home", "/"],
             ["Features", "/features"],
+            ["Gallery", "/gallery"],
             ["About", "/about"],
             ["Team", "/team"],
           ].map(([label, href]) => (
