@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link"
 import Image from "next/image"
-import { ThemeToggle } from "./theme-toggle"
 import { Button } from "@/components/ui/button"
 
 export function NavbarTop() {
@@ -32,10 +31,6 @@ export function NavbarTop() {
           <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
             <Link href="/wishlist">Join Wishlist</Link>
           </Button>
-          <ThemeToggle />
-        </div>
-        <div className="md:hidden">
-          <ThemeToggle />
         </div>
       </nav>
     </header>
