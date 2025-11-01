@@ -30,6 +30,11 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   metadataBase: new URL("https://stremini.ai"),
   alternates: { canonical: "https://stremini.ai" },
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
     description:
