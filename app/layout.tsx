@@ -64,7 +64,7 @@ export default function RootLayout({
   const GTM_ID = "GTM-5CK2HCQP";
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <Script
           id="google-tag-manager"
@@ -81,16 +81,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <Script id="stremini-theme-init" strategy="beforeInteractive">
-          {`
-            try {
-              const stored = localStorage.getItem('theme');
-              const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              const theme = stored || (systemDark ? 'dark' : 'light');
-              document.documentElement.classList.toggle('dark', theme === 'dark');
-            } catch (_) {}
-          `}
-        </Script>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
 
 
