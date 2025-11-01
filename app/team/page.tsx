@@ -37,6 +37,7 @@ const teamData = {
       "Edmund Mylliem Umlong (Marketing Head)",
       "Restant",
       "Vansh Sharma",
+      "Khushi Kumari",
       "Zh4r",
       "Devansh Doshi",
     ],
