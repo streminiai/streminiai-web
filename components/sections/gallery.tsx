@@ -1,10 +1,11 @@
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
+import Image from "next/image"
 
 const items = [
-  { title: "Scam Detection Demo", soon: false },
-  { title: "Voice Automation", soon: false },
-  { title: "AI Keyboard", soon: false },
-  { title: "Smart Automation", soon: true },
+  { title: "Scam Detection Demo", image: "/gallery-1.jpg", soon: false },
+  { title: "Chatbot", image: "/gallery-2.jpg", soon: false },
+  { title: "AI Keyboard", image: "/gallery-3.jpg", soon: false },
+  { title: "Smart Automation", image: "/gallery-4.jpg", soon: true },
 ]
 
 export function Gallery() {
@@ -14,7 +15,6 @@ export function Gallery() {
       <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-muted-foreground md:text-base">
         A glimpse of Stremini in action.
       </p>
-
       <div className="mt-8 hidden gap-4 overflow-x-auto pb-2 md:flex md:snap-x md:snap-mandatory">
         {items.map((it) => (
           <Card key={it.title} className="min-w-[320px] snap-start border border-border bg-card">
@@ -27,12 +27,18 @@ export function Gallery() {
               )}
             </CardHeader>
             <CardContent>
-              <div className="h-40 w-full rounded-md bg-muted" />
+              <div className="relative h-40 w-full overflow-hidden rounded-md">
+                <Image
+                  src={it.image}
+                  alt={it.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
-
       <div className="mt-8 grid gap-4 md:hidden">
         {items.map((it) => (
           <Card key={it.title} className="border border-border bg-card">
@@ -45,7 +51,14 @@ export function Gallery() {
               )}
             </CardHeader>
             <CardContent>
-              <div className="h-40 w-full rounded-md bg-muted" />
+              <div className="relative h-40 w-full overflow-hidden rounded-md">
+                <Image
+                  src={it.image}
+                  alt={it.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </CardContent>
           </Card>
         ))}
