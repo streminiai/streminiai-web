@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { AssistantDemo } from "@/components/assistant-demo"
-
 export function Hero() {
   return (
     <div className="mx-auto max-w-6xl px-4 pt-16 md:pt-24">
@@ -27,23 +26,25 @@ export function Hero() {
               <Link href="#features">Explore Features</Link>
             </Button>
           </div>
-
-          <div className="mt-8 grid grid-cols-2 gap-4 text-sm text-muted-foreground sm:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 text-sm text-muted-foreground md:grid-cols-4">
             <div className="rounded-md border border-border p-3">
-              <span className="block text-foreground">Pre‑launch</span> status
+              <span className="block text-foreground font-medium">Launching Soon</span>
+              <span className="text-xs">Status</span>
             </div>
             <div className="rounded-md border border-border p-3">
-              <span className="block text-foreground">No ratings</span> yet
+              <span className="block text-foreground font-medium">24/7 Available</span>
+              <span className="text-xs">AI Chatbot</span>
             </div>
             <div className="rounded-md border border-border p-3">
-              <span className="block text-foreground">Bank-level</span> security
+              <span className="block text-foreground font-medium">Fully Safe</span>
+              <span className="text-xs">Security</span>
             </div>
             <div className="rounded-md border border-border p-3">
-              <span className="block text-foreground">24/7</span> AI protection
+              <span className="block text-foreground font-medium">24/7 Available</span>
+              <span className="text-xs">Digital Protection</span>
             </div>
           </div>
         </div>
-
         {/* Right demo */}
         <div className="relative">
           <div
