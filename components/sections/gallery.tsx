@@ -10,16 +10,16 @@ const items = [
 
 export function Gallery() {
   return (
-    <div className="mx-auto max-w-6xl px-4">
+    <div className="mx-auto max-w-7xl px-4">
       <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">Gallery</h2>
       <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-muted-foreground md:text-base">
         A glimpse of Stremini in action.
       </p>
       
-      {/* Desktop: Horizontal scroll */}
-      <div className="mt-8 hidden gap-4 overflow-x-auto pb-4 md:flex md:snap-x md:snap-mandatory">
+      {/* Desktop: Grid layout */}
+      <div className="mt-8 hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-4">
         {items.map((it) => (
-          <Card key={it.title} className="min-w-[320px] flex-shrink-0 snap-start border border-border bg-card">
+          <Card key={it.title} className="border border-border bg-card overflow-hidden">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-base font-medium">{it.title}</span>
@@ -30,13 +30,13 @@ export function Gallery() {
                 )}
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="relative h-48 w-full overflow-hidden rounded-lg">
+            <CardContent className="pt-0">
+              <div className="relative aspect-[9/16] w-full overflow-hidden rounded-lg">
                 <Image
                   src={it.image}
                   alt={it.title}
                   fill
-                  className="object-cover"
+                  className="object-contain bg-muted"
                 />
               </div>
             </CardContent>
@@ -59,12 +59,12 @@ export function Gallery() {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="relative h-52 w-full overflow-hidden rounded-lg">
+              <div className="relative aspect-[9/16] w-full overflow-hidden rounded-lg">
                 <Image
                   src={it.image}
                   alt={it.title}
                   fill
-                  className="object-cover"
+                  className="object-contain bg-muted"
                 />
               </div>
             </CardContent>
