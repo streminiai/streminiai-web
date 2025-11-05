@@ -12,7 +12,7 @@ const teamData = {
   coFounders: {
     title: "Co-Founders",
     icon: Users,
-    members: ["Edmund Mylliem Umlong", "Vishwajeet", "Vector", "Mehridin Yo'ldoshev"],
+    members: ["Edmund Mylliem Umlong", "Vishwajeet", "Vector", "Mehridin Yo'ldoshev","Energy"],
   },
   developers: {
     title: "Developers Team",
@@ -23,11 +23,11 @@ const teamData = {
       "Chandan",
       "Abhinanda Raghav. S",
       "Arnav Sen",
-      "SHUBHAM",
-      "Valiant Joe",
       "Tushar",
       "Sanju",
       "Hasan Rezaee",
+      "Sulaymon",
+      "Akshay Arora",
     ],
   },
   marketing: {
@@ -45,7 +45,7 @@ const teamData = {
   research: {
     title: "Research & Operations Team",
     icon: Briefcase,
-    members: ["Mehridin Yo'ldoshev (Head)","Alzali","Zhar", "Abhinab Mishra", "Pankaj",
+    members: ["Mehridin Yo'ldoshev (Head)","Zhar", "Abhinab Mishra", "Pankaj",
       "Devansh Doshi",
     ],
   },
