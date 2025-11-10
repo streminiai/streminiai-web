@@ -27,7 +27,7 @@ const teamData = {
       "Sanju",
       "Hasan Rezaee",
       "Sulaymon",
-      "Akshay Arora",
+
     ],
   },
   marketing: {
@@ -40,6 +40,7 @@ const teamData = {
       "Khushi Kumari",
       "Zh4r",
       "Devansh Doshi",
+      "Sanchita Barua",
     ],
   },
   research: {
