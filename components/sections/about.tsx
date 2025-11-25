@@ -9,7 +9,7 @@ export function About() {
       desc: "On-device for speed and privacy, cloud for heavy lifting—best of both.",
     },
     {
-      title: "Bank-level Encryption",
+      title: "Strong Security",
       desc: "Your data is protected with strong encryption and zero-trust defaults.",
     },
     {
