@@ -5,7 +5,7 @@ const qas = [
     q: "What is Stremini AI?",
     a: "An advanced floating AI assistant for digital security and productivity. It proactively protects you and helps you work faster.",
   },
-  { q: "Is my data secure?", a: "Yes. Stremini uses bank-level encryption and strict privacy controls." },
+  { q: "Is my data secure?", a: "Yes. Stremini has strict privacy controls." },
   { q: "Does it work on mobile and desktop?", a: "Yes, Stremini supports Web, iOS, Android, and Desktop platforms." },
   { q: "Can I cancel anytime?", a: "Absolutely. You can upgrade, downgrade, or cancel at any time." },
 ]
