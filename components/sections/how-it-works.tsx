@@ -4,7 +4,7 @@ import { ShieldCheck, Sparkles, Keyboard } from "lucide-react"
 const steps = [
   {
     title: "1. Protect",
-    desc: "Stremini scans links, attachments, and pages in real time—blocking threats proactively.",
+    desc: "Stremini scans links, attachments, and pages blocking threats proactively.",
     icon: ShieldCheck,
   },
   {
