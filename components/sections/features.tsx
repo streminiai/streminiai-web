@@ -6,7 +6,7 @@ const items = [
   { title: "Talk Assist", desc: "Voice-first assistant to execute actions hands-free.", icon: MessageSquare },
   { title: "Core AI", desc: "On-device + cloud AI orchestration for speed and privacy.", icon: Cpu },
   { title: "Emotional Tone Sense", desc: "Understands tone to craft better communications.", icon: Bot },
-  { title: "Smart Protection", desc: "Real-time scam and phishing detection across apps.", icon: ShieldCheck },
+  { title: "Smart Protection", desc: "Proactive scam and phishing detection across apps.", icon: ShieldCheck },
   { title: "AI Keyboard", desc: "Type faster with context-aware AI completions.", icon: Keyboard },
 ]
 
