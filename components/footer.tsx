@@ -41,10 +41,7 @@ export function Footer() {
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <Link href="https://www.instagram.com/streminiai/" target="_blank" rel="noopener noreferrer">
             Instagram
-          </Link>
-          <Link href="https://t.me/stremini" target="_blank" rel="noopener noreferrer">
-            Telegram
-          </Link>
+          </Link
           <Link href="https://twitter.com/stremini" target="_blank" rel="noopener noreferrer">
             Twitter
           </Link>
