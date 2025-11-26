@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
     description:
-      "An advanced floating AI assistant with bank-level security, 24/7 protection, and seamless productivity tools.",
+      "An advanced floating AI assistant with 24/7 protection, and seamless productivity tools.",
     url: "https://stremini.ai",
     siteName: "Stremini AI",
     type: "website",
@@ -146,7 +146,7 @@ export default function RootLayout({
                   name: "Is Stremini secure?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "Yes, Stremini uses bank-level encryption and proactive threat prevention.",
+                    text: "Yes, Stremini provides proactive threat prevention.",
                   },
                 },
               ],
