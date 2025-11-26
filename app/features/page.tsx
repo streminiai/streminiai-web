@@ -44,7 +44,7 @@ const features = [
     desc: "Understands tone to craft better communications.",
     icon: Bot,
     details: [
-      "Analyzes sentiment in real-time",
+      "Analyzes sentiment in proactively",
       "Suggests tone adjustments for emails and messages",
       "Helps avoid miscommunication",
       "Improves professional and personal interactions",
