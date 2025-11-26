@@ -20,7 +20,7 @@ const teamData = {
     members: [
       "Vishwajeet (Lead Dev 1)",
       "Vector (Lead Dev 2)",
-      "Abhinanda Raghav. S",
+      "Abhinanda Raghav",
       "Arnav Sen",
       "Tushar",
       "Sanjju",
