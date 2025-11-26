@@ -20,12 +20,10 @@ const teamData = {
     members: [
       "Vishwajeet (Lead Dev 1)",
       "Vector (Lead Dev 2)",
-      "Chandan",
       "Abhinanda Raghav. S",
       "Arnav Sen",
       "Tushar",
-      "Sanju",
-      "Hasan Rezaee",
+      "Sanjju",
       "Sulaymon",
 
     ],
@@ -36,18 +34,16 @@ const teamData = {
     members: [
       "Edmund Mylliem Umlong (Marketing Head)",
       "Restant",
-      "Vansh Sharma",
       "Khushi Kumari",
-      "Zh4r",
-      "Devansh Doshi",
       "Sanchita Barua",
+      "Auroja Peshin",
+      "Salifa",
     ],
   },
   research: {
-    title: "Research & Operations Team",
+    title: "Management",
     icon: Briefcase,
-    members: ["Mehridin Yo'ldoshev (Head)","Zhar", "Abhinab Mishra", "Pankaj",
-      "Devansh Doshi",
+    members: ["Mehridin Yo'ldoshev (Head)", "Abhinab Mishra", "Pankaj",
     ],
   },
 }
