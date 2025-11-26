@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { AssistantDemo } from "@/components/assistant-demo"
 export function Hero() {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-16 md:pt-24">
+    <div className="mx-auto max-w-6xl px-4 pt-8 md:pt-12">
       <div className="grid items-center gap-8 md:grid-cols-2">
         {/* Left copy */}
         <div>
