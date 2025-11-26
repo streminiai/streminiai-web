@@ -25,7 +25,7 @@ export function AssistantDemo() {
             </div>
 
             <div className="ml-9 rounded-lg border border-border bg-muted px-3 py-2 text-muted-foreground">
-              I’m scanning links and attachments in real-time. Suspicious domains are blocked automatically.
+              I’m scanning links and attachments in proactively. Suspicious domains are blocked automatically.
             </div>
 
             <div className="flex items-start gap-3">
