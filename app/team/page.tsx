@@ -23,7 +23,8 @@ const teamData = {
       "Abhinanda Raghav",
       "Arnav Sen",
       "Tushar",
-      "Sanjju",
+      "Sanju",
+      "Abdelaziz Ahmed",
       "Sulaymon",
 
     ],
@@ -36,14 +37,14 @@ const teamData = {
       "Restant",
       "Khushi Kumari",
       "Sanchita Barua",
-      "Auroja Peshin",
+      "Elysian",
       "Salifa",
     ],
   },
   research: {
     title: "Management",
     icon: Briefcase,
-    members: ["Mehridin Yo'ldoshev (Head)", "Abhinab Mishra", "Pankaj",
+    members: ["Mehridin Yo'ldoshev (Head)", "Pankaj","Elysian","Sanchita Barua","Auroja Peshin",
     ],
   },
 }
