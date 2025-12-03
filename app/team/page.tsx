@@ -7,7 +7,7 @@ const teamData = {
   founder: {
     title: "Founder",
     icon: Briefcase,
-    members: ["Kyzor"],
+    members: ["Krishna Arora"],
   },
   coFounders: {
     title: "Co-Founders",
@@ -24,7 +24,6 @@ const teamData = {
       "Arnav Sen",
       "Tushar",
       "Sanju",
-      "Abdelaziz Ahmed",
       "Sulaymon",
 
     ],
