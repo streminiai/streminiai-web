@@ -163,23 +163,6 @@ export default function WishlistPage() {
                     </p>
                 </div>
 
-                        {/* Google Form - Join Waitlist */}
-        <div className="mt-12 mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-center">Join Our Waitlist</h2>
-          <div className="flex justify-center">
-            <iframe
-              src="https://docs.google.com/forms/d/e/1FAIpQLScH8_GGO3x33hAZlDplggSdrGmbEjXLpSLgpBfwPc7kMC-3fA/viewform?embedded=true"
-              width="640"
-              height="1786"
-              frameBorder="0"
-              marginHeight={0}
-              marginWidth={0}
-              className="rounded-lg border border-border"
-            >
-              Loading…
-            </iframe>
-          </div>
-        </div>
 
                 {/* Preset Features */}
                 <div className="mb-8">
