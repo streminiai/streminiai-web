@@ -12,7 +12,7 @@ const teamData = {
   coFounders: {
     title: "Co-Founders",
     icon: Users,
-    members: ["Vishwajeet", "Vector", "Mehridin Yo'ldoshev","Energy"],
+    members: ["Edmund Mylliem Umlong", "Vishwajeet", "Vector", "Mehridin Yo'ldoshev","Energy"],
   },
   developers: {
     title: "Developers Team",
@@ -32,7 +32,7 @@ const teamData = {
     title: "Marketing Team",
     icon: Megaphone,
     members: [
-      "Restant (Marketing Head)",
+      ""Edmund Mylliem Umlong (Marketing Head)", Restant (Marketing Head)",
       "Khushi Kumari",
       "Sanchita Barua",
       "Elysian",
