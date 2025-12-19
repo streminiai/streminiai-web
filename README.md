@@ -1,108 +1,91 @@
-# Stremini Waitlist Website
+# Stremini AI
 
-A modern Next.js 14 waitlist and download page with an admin panel for managing waitlist entries. Built with Framer Motion animations and Supabase backend.
+> The #1 Floating AI Assistant for Digital Security & Productivity
 
-## Features
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?style=flat-square&logo=tailwind-css)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase)
 
-- 🎨 **Beautiful UI** - Dark theme with glassmorphism, gradient effects, and floating particles
-- ✨ **Framer Motion** - Smooth animations throughout the app
-- 📧 **Waitlist Signup** - Email collection with validation and duplicate detection
-- 👨‍💼 **Admin Panel** - Full waitlist management dashboard
-- 🔐 **Authentication** - Secure admin access via Supabase Auth
-- 📊 **Analytics** - Stats cards showing signup metrics
-- 🔍 **Search & Filter** - Find entries by email, name, or status
-- 📥 **CSV Export** - Download waitlist data for external use
+## 🌟 Overview
 
-## Tech Stack
+Stremini AI is an intelligent floating assistant that enhances your digital security and productivity. This repository contains the official website showcasing features, team, and waitlist signup.
 
-- **Framework**: Next.js 14 (App Router)
-- **Database**: Supabase (PostgreSQL)
-- **Animations**: Framer Motion
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Auth**: Supabase Auth
+**🔗 Live Site:** [stremini.site](https://stremini.site)
 
-## Setup Instructions
+## ✨ Features
 
-### 1. Create Supabase Project
+- **🛡️ Scam Detection** - Real-time protection against phishing and fraud
+- **🤖 AI Chatbot** - Smart assistant for everyday tasks
+- **⌨️ AI Keyboard** - Context-aware typing suggestions
+- **🔄 Smart Automation** - Automate repetitive workflows
 
-1. Go to [supabase.com](https://supabase.com) and create a free account
-2. Create a new project
-3. Wait for the project to be ready
+## 🚀 Getting Started
 
-### 2. Set Up Database
+### Prerequisites
 
-1. In your Supabase dashboard, go to **SQL Editor**
-2. Copy the contents of `supabase-schema.sql` and run it
-3. This creates the `waitlist` table with proper security policies
+- Node.js 18+
+- npm or yarn
+- Supabase account (for backend)
 
-### 3. Create Admin User
-
-1. Go to **Authentication** → **Users** in Supabase
-2. Click **Add user** → **Create new user**
-3. Enter your admin email and password
-4. You'll use these credentials to log into the admin panel
-
-### 4. Configure Environment Variables
-
-Create a `.env.local` file in the project root:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-```
-
-Find these values in Supabase: **Settings** → **API**
-
-### 5. Run the Development Server
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/streminiai/streminiai-web.git
+
+# Navigate to project
+cd streminiai-web
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the waitlist page.
-Open [http://localhost:3000/admin](http://localhost:3000/admin) for the admin panel.
+### Environment Variables
 
-## Project Structure
+Create a `.env.local` file:
 
-```
-src/
-├── app/
-│   ├── admin/
-│   │   └── page.tsx      # Admin dashboard
-│   ├── globals.css       # Global styles
-│   ├── layout.tsx        # Root layout with SEO
-│   └── page.tsx          # Main waitlist page
-└── lib/
-    └── supabase.ts       # Supabase client
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-## Admin Panel Features
+## 📁 Project Structure
 
-- **View all signups** with email, name, status, and date
-- **Approve users** to grant them access
-- **Remove users** from the waitlist
-- **Delete users** permanently
-- **Search** by email or name
-- **Filter** by status (pending, approved, removed)
-- **Export CSV** of all entries
+```
+├── app/                    # Next.js App Router pages
+│   ├── page.tsx           # Homepage
+│   ├── team/              # Team page
+│   ├── gallery/           # Gallery with Focus Cards
+│   ├── wishlist/          # Waitlist signup
+│   └── admin/             # Admin dashboard
+├── components/
+│   ├── ui/                # Reusable UI components
+│   └── sections/          # Page sections
+├── lib/                   # Utilities & Supabase client
+└── public/                # Static assets
+```
 
-## Deployment
+## 🛠️ Tech Stack
 
-### Vercel (Recommended)
+| Technology | Purpose |
+|------------|---------|
+| Next.js 15 | React framework |
+| TypeScript | Type safety |
+| Tailwind CSS 4 | Styling |
+| Framer Motion | Animations |
+| Supabase | Database & Auth |
+| Lucide React | Icons |
 
-1. Push your code to GitHub
-2. Import the project in [Vercel](https://vercel.com)
-3. Add environment variables in Vercel dashboard
-4. Deploy!
+## 📝 License
 
-### Environment Variables for Production
+© 2025 Stremini AI. All rights reserved.
 
-Make sure to add these in your hosting platform:
+---
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-## License
-
-MIT License - feel free to use this for your own projects!
+<p align="center">
+  Made with ❤️ by the <a href="https://stremini.site/team">Stremini Team</a>
+</p>
