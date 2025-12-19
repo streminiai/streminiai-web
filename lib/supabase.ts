@@ -34,6 +34,7 @@ export type TeamMember = {
     image_url: string | null
     linkedin_url: string | null
     twitter_url: string | null
+    instagram_url: string | null
     display_order: number
     is_active: boolean
     created_at: string

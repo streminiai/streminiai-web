@@ -9,6 +9,7 @@ create table if not exists public.team_members (
   image_url text,
   linkedin_url text,
   twitter_url text,
+  instagram_url text,
   display_order integer default 0,
   is_active boolean default true,
   created_at timestamp with time zone default timezone('utc'::text, now()),

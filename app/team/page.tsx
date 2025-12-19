@@ -220,6 +220,7 @@ export default function TeamPage() {
                           imageUrl={member.image_url}
                           linkedinUrl={member.linkedin_url}
                           twitterUrl={member.twitter_url}
+                          instagramUrl={member.instagram_url}
                         />
                       ))}
                     </div>

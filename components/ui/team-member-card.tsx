@@ -4,7 +4,7 @@ import { animate, motion } from "motion/react";
 import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { FaLinkedin, FaTwitter, FaGithub } from "react-icons/fa";
+import { FaLinkedin, FaTwitter, FaGithub, FaInstagram } from "react-icons/fa";
 
 // Sparkles animation
 const Sparkles = () => {
@@ -75,6 +75,7 @@ export interface TeamMemberCardProps {
     linkedinUrl?: string | null;
     twitterUrl?: string | null;
     githubUrl?: string | null;
+    instagramUrl?: string | null;
     category?: string;
     className?: string;
 }
@@ -86,6 +87,7 @@ export default function TeamMemberCard({
     linkedinUrl,
     twitterUrl,
     githubUrl,
+    instagramUrl,
     className,
 }: TeamMemberCardProps) {
     const initials = name
@@ -200,6 +202,18 @@ export default function TeamMemberCard({
                             whileTap={{ scale: 0.95 }}
                         >
                             <FaGithub className="h-4 w-4" />
+                        </motion.a>
+                    )}
+                    {instagramUrl && (
+                        <motion.a
+                            href={instagramUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-lg bg-neutral-200/50 dark:bg-neutral-700/50 text-neutral-600 dark:text-neutral-400 hover:bg-pink-500/20 hover:text-pink-500 transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaInstagram className="h-4 w-4" />
                         </motion.a>
                     )}
                 </div>
