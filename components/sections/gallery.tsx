@@ -1,78 +1,51 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import Image from "next/image"
+"use client"
 
-const items = [
-  { title: "Scam Detection Demo", image: "/gallery-1.jpg", soon: false },
-  { title: "Chatbot", image: "/gallery-2.jpg", soon: false },
-  { title: "AI Keyboard", image: "/gallery-3.jpg", soon: false },
-  { title: "Smart Automation", image: "/gallery-4.jpg", soon: true },
+import { motion } from "framer-motion"
+import { Images } from "lucide-react"
+import { FocusCards } from "@/components/ui/focus-cards"
+
+const galleryItems = [
+  { title: "Scam Detection Demo", src: "/gallery-1.jpg" },
+  { title: "Chatbot", src: "/gallery-2.jpg" },
+  { title: "AI Keyboard", src: "/gallery-3.jpg" },
+  { title: "Smart Automation", src: "/gallery-4.jpg" },
 ]
 
 export function Gallery() {
   return (
     <div className="mx-auto max-w-7xl px-4">
-      <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">Gallery</h2>
-      <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-muted-foreground md:text-base">
-        A glimpse of Stremini in action.
-      </p>
-      
-      {/* Desktop: 4 column grid */}
-      <div className="mt-8 hidden gap-6 md:grid md:grid-cols-2 xl:grid-cols-4">
-        {items.map((it) => (
-          <Card key={it.title} className="border border-border bg-card">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium">{it.title}</span>
-                {it.soon && (
-                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground whitespace-nowrap">
-                    Soon
-                  </span>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="relative w-full rounded-lg overflow-hidden bg-muted" style={{ height: '400px' }}>
-                <Image
-                  src={it.image}
-                  alt={it.title}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* Header */}
+      <motion.div
+        className="mb-12 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5">
+          <Images className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium text-primary">Gallery</span>
+        </div>
+        <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          Stremini in{" "}
+          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Action
+          </span>
+        </h2>
+        <p className="mx-auto max-w-2xl text-muted-foreground">
+          A glimpse of what Stremini can do. Hover over images to explore.
+        </p>
+      </motion.div>
 
-      {/* Mobile: Single column */}
-      <div className="mt-8 space-y-6 md:hidden">
-        {items.map((it) => (
-          <Card key={it.title} className="border border-border bg-card">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-base font-medium">{it.title}</span>
-                {it.soon && (
-                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground whitespace-nowrap">
-                    Coming Soon
-                  </span>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="relative w-full rounded-lg overflow-hidden bg-muted" style={{ height: '500px' }}>
-                <Image
-                  src={it.image}
-                  alt={it.title}
-                  fill
-                  className="object-contain"
-                  sizes="100vw"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* Focus Cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+      >
+        <FocusCards cards={galleryItems} />
+      </motion.div>
     </div>
   )
 }
