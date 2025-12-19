@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import {
     Users,
     Check,
@@ -13,9 +14,7 @@ import {
     Filter,
     Clock,
     CheckCircle,
-    XCircle,
     Mail,
-    Eye,
     Trash2,
     Plus,
     Edit,
@@ -169,7 +168,7 @@ function TeamMemberModal({
 }: {
     member: TeamMember | null
     onClose: () => void
-    onSave: (data: Partial<TeamMember>) => void
+    onSave: (_data: Partial<TeamMember>) => void
 }) {
     const [formData, setFormData] = useState({
         name: member?.name || "",
@@ -544,10 +543,10 @@ function Dashboard() {
                                                     <td className="px-6 py-4">
                                                         <span
                                                             className={`px-2 py-1 rounded-full text-xs font-semibold ${entry.status === "approved"
-                                                                    ? "bg-green-500/20 text-green-400"
-                                                                    : entry.status === "pending"
-                                                                        ? "bg-yellow-500/20 text-yellow-400"
-                                                                        : "bg-red-500/20 text-red-400"
+                                                                ? "bg-green-500/20 text-green-400"
+                                                                : entry.status === "pending"
+                                                                    ? "bg-yellow-500/20 text-yellow-400"
+                                                                    : "bg-red-500/20 text-red-400"
                                                                 }`}
                                                         >
                                                             {entry.status}
@@ -611,7 +610,7 @@ function Dashboard() {
                                         <div className="flex items-start justify-between mb-3">
                                             <div className="flex items-center gap-3">
                                                 {member.image_url ? (
-                                                    <img src={member.image_url} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
+                                                    <Image src={member.image_url} alt={member.name} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
                                                 ) : (
                                                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
                                                         <span className="text-sm font-bold text-purple-400">
