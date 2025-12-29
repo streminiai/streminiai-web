@@ -6,7 +6,7 @@ import "./globals.css"
 import Script from "next/script"
 import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
-import { NavbarTop } from "@/components/navbar-top"
+import SidebarDemo from "@/components/sidebar-demo"
 import { Footer } from "@/components/footer"
 
 export const metadata: Metadata = {
@@ -163,7 +163,12 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           ></iframe>
         </noscript>
-        <Suspense fallback={null}><NavbarTop />{children}      <Footer /> <Analytics />
+        <Suspense fallback={null}>
+          <SidebarDemo>
+            {children}
+            <Footer />
+          </SidebarDemo>
+          <Analytics />
         </Suspense>
       </body>
     </html>
