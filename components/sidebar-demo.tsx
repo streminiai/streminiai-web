@@ -10,8 +10,6 @@ import {
     IconInfoCircle,
     IconUsers,
     IconHeart,
-    IconSettings,
-    IconLogout,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -60,20 +58,6 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
                 <IconHeart className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
             ),
         },
-        {
-            label: "Settings",
-            href: "#",
-            icon: (
-                <IconSettings className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
-            ),
-        },
-        {
-            label: "Logout",
-            href: "#",
-            icon: (
-                <IconLogout className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
-            ),
-        },
     ];
     const [open, setOpen] = useState(false);
     return (
@@ -92,19 +76,6 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
                                 <SidebarLink key={idx} link={link} />
                             ))}
                         </div>
-                    </div>
-                    <div>
-                        <SidebarLink
-                            link={{
-                                label: "Admin User",
-                                href: "#",
-                                icon: (
-                                    <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center text-primary-foreground text-xs font-semibold">
-                                        AU
-                                    </div>
-                                ),
-                            }}
-                        />
                     </div>
                 </SidebarBody>
             </Sidebar>
