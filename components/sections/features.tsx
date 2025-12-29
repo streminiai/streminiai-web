@@ -1,56 +1,44 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import { Bot, Zap, Cpu, MessageSquare, ShieldCheck, Keyboard } from "lucide-react"
+"use client"
 
-const items = [
-  { title: "Smart Auto Tasker", desc: "Automate repetitive workflows with a single tap.", icon: Zap },
-  { title: "Talk Assist", desc: "Voice-first assistant to execute actions hands-free.", icon: MessageSquare },
-  { title: "Core AI", desc: "On-device + cloud AI orchestration for speed and privacy.", icon: Cpu },
-  { title: "Emotional Tone Sense", desc: "Understands tone to craft better communications.", icon: Bot },
-  { title: "Smart Protection", desc: "Proactive scam and phishing detection across apps.", icon: ShieldCheck },
-  { title: "AI Keyboard", desc: "Type faster with context-aware AI completions.", icon: Keyboard },
-]
+import { motion } from "framer-motion"
+import { Sparkles } from "lucide-react"
+import FeaturesSectionDemo from "@/components/ui/features-section-demo-2"
 
 export function Features() {
   return (
-    <div className="mx-auto max-w-6xl px-4">
-      <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">Features</h2>
-      <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-muted-foreground md:text-base">
-        Built for security and productivity—seamlessly floating over your apps when you need it.
-      </p>
-
-      <div className="mt-8">
-        <div className="hidden gap-4 overflow-x-auto pb-2 md:flex md:snap-x md:snap-mandatory">
-          {items.map((it) => {
-            const Icon = it.icon
-            return (
-              <Card key={it.title} className="min-w-[320px] snap-start border border-border bg-card">
-                <div className="h-1 w-full rounded-t-md bg-gradient-to-r from-primary to-accent" aria-hidden />
-                <CardHeader className="flex flex-row items-center gap-3 text-lg font-medium">
-                  <Icon size={18} className="text-primary" />
-                  {it.title}
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{it.desc}</CardContent>
-              </Card>
-            )
-          })}
+    <div className="mx-auto max-w-7xl px-4">
+      {/* Header */}
+      <motion.div
+        className="mb-12 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5">
+          <Sparkles className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium text-primary">Features</span>
         </div>
+        <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          Powered by{" "}
+          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Advanced AI
+          </span>
+        </h2>
+        <p className="mx-auto max-w-2xl text-muted-foreground">
+          Built for security and productivity—seamlessly floating over your apps when you need it.
+        </p>
+      </motion.div>
 
-        <div className="grid gap-4 md:hidden">
-          {items.map((it) => {
-            const Icon = it.icon
-            return (
-              <Card key={it.title} className="border border-border bg-card">
-                <div className="h-1 w-full rounded-t-md bg-gradient-to-r from-primary to-accent" aria-hidden />
-                <CardHeader className="flex flex-row items-center gap-3 text-base font-medium">
-                  <Icon size={18} className="text-primary" />
-                  {it.title}
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{it.desc}</CardContent>
-              </Card>
-            )
-          })}
-        </div>
-      </div>
+      {/* Enhanced Features Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+      >
+        <FeaturesSectionDemo />
+      </motion.div>
     </div>
   )
 }
