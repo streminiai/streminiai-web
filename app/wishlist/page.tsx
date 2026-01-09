@@ -61,7 +61,7 @@ export default function WaitlistPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background pt-20 pb-24">
+    <div className="min-h-screen bg-background pt-20 pb-24">
       <div className="mx-auto max-w-2xl px-4">
         {/* Header */}
         <motion.div
@@ -190,6 +190,6 @@ export default function WaitlistPage() {
           </Link>
         </motion.div>
       </div>
-    </main>
+    </div>
   )
 }

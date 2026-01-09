@@ -41,6 +41,21 @@ export type TeamMember = {
     updated_at: string
 }
 
+export type BlogPost = {
+    id: string
+    title: string
+    slug: string
+    content: string
+    excerpt: string | null
+    author: string
+    featured_image_url: string | null
+    tags: string[]
+    is_published: boolean
+    published_at: string | null
+    created_at: string
+    updated_at: string
+}
+
 export const categoryLabels: Record<TeamMember['category'], string> = {
     'founder': 'Founder',
     'co-founder': 'Co-Founders',

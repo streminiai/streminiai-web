@@ -76,7 +76,7 @@ const features = [
 
 export default function FeaturesPage() {
   return (
-    <main className="min-h-screen bg-background pt-20 pb-20">
+    <div className="min-h-screen bg-background pt-20 pb-20">
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mb-16 text-center">
@@ -126,6 +126,6 @@ export default function FeaturesPage() {
           </Button>
         </div>
       </div>
-    </main>
+    </div>
   )
 }

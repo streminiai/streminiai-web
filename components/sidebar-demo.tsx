@@ -10,6 +10,8 @@ import {
     IconInfoCircle,
     IconUsers,
     IconHeart,
+    IconBook,
+    IconDeviceImac,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -56,6 +58,20 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
             href: "/wishlist",
             icon: (
                 <IconHeart className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
+            ),
+        },
+        {
+            label: "Blog",
+            href: "/blog",
+            icon: (
+                <IconBook className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
+            ),
+        },
+        {
+            label: "Demo",
+            href: "/demo",
+            icon: (
+                <IconDeviceImac className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
             ),
         },
     ];

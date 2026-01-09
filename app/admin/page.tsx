@@ -22,10 +22,13 @@ import {
     Briefcase,
     Zap,
     Megaphone,
+    BookOpen,
+    Eye,
+    EyeOff,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, BlogPost, categoryLabels } from "@/lib/supabase"
 
-type Tab = "waitlist" | "team"
+type Tab = "waitlist" | "team" | "blog"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
 
 // Login component
@@ -120,12 +123,13 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 }
 
 // Stats cards
-function StatsCards({ entries, teamCount }: { entries: WaitlistEntry[]; teamCount: number }) {
+function StatsCards({ entries, teamCount, blogCount }: { entries: WaitlistEntry[]; teamCount: number; blogCount: number }) {
     const stats = {
         total: entries.length,
         pending: entries.filter((e) => e.status === "pending").length,
         approved: entries.filter((e) => e.status === "approved").length,
         team: teamCount,
+        blog: blogCount,
     }
 
     const cards = [
@@ -133,6 +137,7 @@ function StatsCards({ entries, teamCount }: { entries: WaitlistEntry[]; teamCoun
         { label: "Pending", value: stats.pending, icon: Clock, color: "yellow" },
         { label: "Approved", value: stats.approved, icon: CheckCircle, color: "green" },
         { label: "Team Members", value: stats.team, icon: UserPlus, color: "blue" },
+        { label: "Blog Posts", value: stats.blog, icon: BookOpen, color: "purple" },
     ]
 
     return (
@@ -317,22 +322,27 @@ function Dashboard() {
     const [activeTab, setActiveTab] = useState<Tab>("waitlist")
     const [entries, setEntries] = useState<WaitlistEntry[]>([])
     const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+    const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all")
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
     const [showMemberModal, setShowMemberModal] = useState(false)
+    const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
+    const [showPostModal, setShowPostModal] = useState(false)
 
     const fetchData = useCallback(async () => {
         setLoading(true)
         try {
-            const [waitlistRes, teamRes] = await Promise.all([
+            const [waitlistRes, teamRes, blogRes] = await Promise.all([
                 supabase.from("waitlist").select("*").order("created_at", { ascending: false }),
                 supabase.from("team_members").select("*").order("display_order", { ascending: true }),
+                supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
             ])
 
             if (waitlistRes.data) setEntries(waitlistRes.data)
             if (teamRes.data) setTeamMembers(teamRes.data)
+            if (blogRes.data) setBlogPosts(blogRes.data)
         } catch (error) {
             console.error("Error fetching data:", error)
         } finally {
@@ -441,8 +451,8 @@ function Dashboard() {
             </header>
 
             {/* Main content */}
-            <main className="max-w-7xl mx-auto px-6 py-8">
-                <StatsCards entries={entries} teamCount={teamMembers.length} />
+            <div className="max-w-7xl mx-auto px-6 py-8">
+                <StatsCards entries={entries} teamCount={teamMembers.length} blogCount={blogPosts.length} />
 
                 {/* Tabs */}
                 <div className="flex gap-2 mb-6">
@@ -461,6 +471,14 @@ function Dashboard() {
                     >
                         <Users className="w-4 h-4 inline mr-2" />
                         Team
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("blog")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "blog" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                            }`}
+                    >
+                        <BookOpen className="w-4 h-4 inline mr-2" />
+                        Blog
                     </button>
                 </div>
 
@@ -649,7 +667,120 @@ function Dashboard() {
                         </div>
                     </>
                 )}
-            </main>
+
+                {/* Blog Tab */}
+                {activeTab === "blog" && (
+                    <>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-semibold">Blog Posts</h2>
+                            <button
+                                onClick={() => {
+                                    setSelectedPost(null)
+                                    setShowPostModal(true)
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
+                            >
+                                <Plus className="w-4 h-4" />
+                                New Post
+                            </button>
+                        </div>
+
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-slate-800">
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Title</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Date</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {loading ? (
+                                            <tr>
+                                                <td colSpan={4} className="text-center py-12">
+                                                    <RefreshCw className="w-6 h-6 animate-spin mx-auto text-slate-400" />
+                                                </td>
+                                            </tr>
+                                        ) : blogPosts.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={4} className="text-center py-12 text-slate-400">
+                                                    No blog posts yet
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            blogPosts.map((post) => (
+                                                <tr key={post.id} className="border-b border-slate-800/50 hover:bg-slate-800/50">
+                                                    <td className="px-6 py-4">
+                                                        <div>
+                                                            <p className="font-medium text-white">{post.title}</p>
+                                                            {post.excerpt && (
+                                                                <p className="text-xs text-slate-400 line-clamp-1">{post.excerpt}</p>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span
+                                                            className={`px-2 py-1 rounded-full text-xs font-semibold ${post.is_published
+                                                                    ? "bg-green-500/20 text-green-400"
+                                                                    : "bg-yellow-500/20 text-yellow-400"
+                                                                }`}
+                                                        >
+                                                            {post.is_published ? "Published" : "Draft"}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-slate-400 text-sm">
+                                                        {new Date(post.created_at).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-1">
+                                                            <button
+                                                                onClick={async () => {
+                                                                    await supabase
+                                                                        .from("blog_posts")
+                                                                        .update({ is_published: !post.is_published })
+                                                                        .eq("id", post.id)
+                                                                    fetchData()
+                                                                }}
+                                                                className="p-2 rounded-lg hover:bg-slate-700 text-slate-400"
+                                                                title={post.is_published ? "Unpublish" : "Publish"}
+                                                            >
+                                                                {post.is_published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setSelectedPost(post)
+                                                                    setShowPostModal(true)
+                                                                }}
+                                                                className="p-2 rounded-lg hover:bg-slate-700 text-blue-400"
+                                                                title="Edit"
+                                                            >
+                                                                <Edit className="w-4 h-4" />
+                                                            </button>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (!confirm("Delete this post permanently?")) return
+                                                                    await supabase.from("blog_posts").delete().eq("id", post.id)
+                                                                    fetchData()
+                                                                }}
+                                                                className="p-2 rounded-lg hover:bg-slate-700 text-red-400"
+                                                                title="Delete"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
 
             {/* Team Member Modal */}
             <AnimatePresence>

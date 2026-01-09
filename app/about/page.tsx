@@ -39,7 +39,7 @@ export default function AboutPage() {
   ]
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12">
+    <div className="mx-auto max-w-5xl px-4 py-12">
       {/* Intro */}
       <header className="mb-10 space-y-3">
         <div className="h-2 w-16 rounded-full bg-gradient-to-r from-primary to-accent" aria-hidden />
@@ -108,6 +108,6 @@ export default function AboutPage() {
           </CardContent>
         </Card>
       </section>
-    </main>
+    </div>
   )
 }

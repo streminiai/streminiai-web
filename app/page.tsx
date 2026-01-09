@@ -12,7 +12,7 @@ import { Waitlist } from "@/components/sections/waitlist"
 export default function Page() {
   return (
     <>
-      <main className="min-h-screen">
+      <div className="min-h-screen">
         <section id="home" aria-label="Hero">
           <Hero />
         </section>
@@ -48,7 +48,7 @@ export default function Page() {
         <section id="waitlist" aria-label="Join the Waitlist" className="py-16 md:py-24">
           <Waitlist />
         </section>
-      </main>
+      </div>
       <MobileBottomNav />
     </>
   )

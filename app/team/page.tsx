@@ -120,7 +120,7 @@ export default function TeamPage() {
   const categories: TeamMember['category'][] = ['founder', 'co-founder', 'developer', 'marketing', 'research']
 
   return (
-    <main className="min-h-screen bg-background pt-20 pb-24">
+    <div className="min-h-screen bg-background pt-20 pb-24">
       <div className="mx-auto max-w-7xl px-4">
         {/* Header */}
         <motion.div
@@ -278,6 +278,6 @@ export default function TeamPage() {
           </div>
         </motion.div>
       </div>
-    </main>
+    </div>
   )
 }
