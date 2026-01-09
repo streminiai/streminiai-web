@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { AssistantDemo } from "@/components/assistant-demo"
 import { motion } from "framer-motion"
+import { MagneticWrapper } from "@/components/ui/magnetic-wrapper"
 
 export function Hero() {
   return (
@@ -43,12 +44,16 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-              <Link href="/wishlist">Join Waitlist</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="#features">Explore Features</Link>
-            </Button>
+            <MagneticWrapper strength={0.2}>
+              <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
+                <Link href="/wishlist">Join Waitlist</Link>
+              </Button>
+            </MagneticWrapper>
+            <MagneticWrapper strength={0.2}>
+              <Button asChild variant="outline">
+                <Link href="#features">Explore Features</Link>
+              </Button>
+            </MagneticWrapper>
           </motion.div>
           <motion.div
             className="mt-8 grid grid-cols-2 gap-3 text-sm text-muted-foreground md:grid-cols-4"

@@ -8,6 +8,9 @@ import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
 import SidebarDemo from "@/components/sidebar-demo"
 import { Footer } from "@/components/footer"
+import { CursorOrb } from "@/components/ui/cursor-orb"
+import { PageTransition } from "@/components/ui/page-transition"
+import { AnimatePresence } from "framer-motion"
 
 export const metadata: Metadata = {
   title: "Stremini AI Assistant - #1 Floating AI for Digital Security & Productivity 2025",
@@ -165,9 +168,14 @@ export default function RootLayout({
         </noscript>
         <Suspense fallback={null}>
           <SidebarDemo>
-            {children}
+            <AnimatePresence mode="wait">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </AnimatePresence>
             <Footer />
           </SidebarDemo>
+          <CursorOrb />
           <Analytics />
         </Suspense>
       </body>
