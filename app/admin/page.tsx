@@ -26,7 +26,7 @@ import {
     Eye,
     EyeOff,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost } from "@/lib/supabase"
 
 type Tab = "waitlist" | "team" | "blog"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
