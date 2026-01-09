@@ -78,6 +78,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 {/* Featured image */}
                 {post.featured_image_url && (
                     <div className="aspect-video rounded-xl overflow-hidden mb-8">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={post.featured_image_url}
                             alt={post.title}

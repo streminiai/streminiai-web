@@ -26,7 +26,7 @@ import {
     Eye,
     EyeOff,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, BlogPost, categoryLabels } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels } from "@/lib/supabase"
 
 type Tab = "waitlist" | "team" | "blog"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
@@ -328,8 +328,6 @@ function Dashboard() {
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all")
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
     const [showMemberModal, setShowMemberModal] = useState(false)
-    const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
-    const [showPostModal, setShowPostModal] = useState(false)
 
     const fetchData = useCallback(async () => {
         setLoading(true)
@@ -675,8 +673,8 @@ function Dashboard() {
                             <h2 className="text-lg font-semibold">Blog Posts</h2>
                             <button
                                 onClick={() => {
-                                    setSelectedPost(null)
-                                    setShowPostModal(true)
+                                    // TODO: Implement blog post modal
+                                    alert("Blog post creation coming soon! Use Supabase directly for now.")
                                 }}
                                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
                             >
@@ -723,8 +721,8 @@ function Dashboard() {
                                                     <td className="px-6 py-4">
                                                         <span
                                                             className={`px-2 py-1 rounded-full text-xs font-semibold ${post.is_published
-                                                                    ? "bg-green-500/20 text-green-400"
-                                                                    : "bg-yellow-500/20 text-yellow-400"
+                                                                ? "bg-green-500/20 text-green-400"
+                                                                : "bg-yellow-500/20 text-yellow-400"
                                                                 }`}
                                                         >
                                                             {post.is_published ? "Published" : "Draft"}
@@ -750,8 +748,8 @@ function Dashboard() {
                                                             </button>
                                                             <button
                                                                 onClick={() => {
-                                                                    setSelectedPost(post)
-                                                                    setShowPostModal(true)
+                                                                    // TODO: Implement edit modal
+                                                                    alert("Blog post editing coming soon! Use Supabase directly for now.")
                                                                 }}
                                                                 className="p-2 rounded-lg hover:bg-slate-700 text-blue-400"
                                                                 title="Edit"

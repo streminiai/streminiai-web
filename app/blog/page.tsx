@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { supabase, type BlogPost } from "@/lib/supabase"
 import Link from "next/link"
-import { motion } from "framer-motion"
 import { Calendar, Clock, Tag } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 
@@ -66,6 +65,7 @@ export default async function BlogPage() {
                                         {/* Featured image */}
                                         {post.featured_image_url && (
                                             <div className="aspect-video overflow-hidden">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
                                                     src={post.featured_image_url}
                                                     alt={post.title}
