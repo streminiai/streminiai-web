@@ -5,7 +5,7 @@ import { Eye, Code } from "lucide-react"
 
 interface BlogEditorProps {
     value: string
-    onChange: (value: string) => void
+    onChange: (_value: string) => void
     placeholder?: string
 }
 
@@ -14,7 +14,7 @@ export function BlogEditor({ value, onChange, placeholder = "Write your blog con
 
     // Simple markdown to HTML conversion (basic)
     const renderMarkdown = (markdown: string) => {
-        let html = markdown
+        const html = markdown
             // Headers
             .replace(/^### (.*$)/gim, '<h3 class="text-2xl font-semibold mt-6 mb-3">$1</h3>')
             .replace(/^## (.*$)/gim, '<h2 class="text-3xl font-semibold mt-8 mb-4">$1</h2>')

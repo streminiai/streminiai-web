@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Play, RotateCcw, ArrowRight, Shield, Keyboard, Mic, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 type DemoScenario = "scam" | "voice" | "keyboard" | "protection"
 
@@ -117,8 +118,8 @@ export function StreminiDemoInteractive() {
                                     resetDemo()
                                 }}
                                 className={`p-4 rounded-xl border-2 transition-all text-left ${activeScenario === scenario.id
-                                        ? "border-primary bg-primary/10"
-                                        : "border-border hover:border-primary/50"
+                                    ? "border-primary bg-primary/10"
+                                    : "border-border hover:border-primary/50"
                                     }`}
                             >
                                 <Icon className={`w-6 h-6 mb-2 ${activeScenario === scenario.id ? "text-primary" : "text-muted-foreground"}`} />
@@ -176,12 +177,12 @@ export function StreminiDemoInteractive() {
                                             exit={{ opacity: 0, y: -20 }}
                                             transition={{ duration: 0.4 }}
                                             className={`p-4 rounded-lg ${step.type === "alert"
-                                                    ? "bg-red-500/10 border border-red-500/30"
-                                                    : step.type === "action"
-                                                        ? "bg-green-500/10 border border-green-500/30"
-                                                        : step.type === "suggestion"
-                                                            ? "bg-blue-500/10 border border-blue-500/30"
-                                                            : "bg-slate-800/50 border border-slate-700"
+                                                ? "bg-red-500/10 border border-red-500/30"
+                                                : step.type === "action"
+                                                    ? "bg-green-500/10 border border-green-500/30"
+                                                    : step.type === "suggestion"
+                                                        ? "bg-blue-500/10 border border-blue-500/30"
+                                                        : "bg-slate-800/50 border border-slate-700"
                                                 }`}
                                         >
                                             <p className="whitespace-pre-line text-sm">{step.content}</p>
@@ -227,7 +228,7 @@ export function StreminiDemoInteractive() {
                 <div className="text-center mt-12">
                     <p className="text-muted-foreground mb-4">Ready to experience Stremini for real?</p>
                     <Button asChild size="lg" className="bg-gradient-to-r from-primary to-accent">
-                        <a href="/wishlist">Join the Waitlist</a>
+                        <Link href="/wishlist">Join the Waitlist</Link>
                     </Button>
                 </div>
             </div>
