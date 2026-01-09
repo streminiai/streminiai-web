@@ -9,6 +9,8 @@ interface PageProps {
     params: Promise<{ slug: string }>
 }
 
+export const dynamic = "force-dynamic"
+
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
     const { data, error } = await supabase
         .from("blog_posts")

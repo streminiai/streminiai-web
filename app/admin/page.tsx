@@ -1001,9 +1001,13 @@ function Dashboard() {
                                                         <div className="flex items-center gap-1">
                                                             <button
                                                                 onClick={async () => {
+                                                                    const newStatus = !post.is_published
                                                                     await supabase
                                                                         .from("blog_posts")
-                                                                        .update({ is_published: !post.is_published })
+                                                                        .update({
+                                                                            is_published: newStatus,
+                                                                            published_at: newStatus ? new Date().toISOString() : post.published_at
+                                                                        })
                                                                         .eq("id", post.id)
                                                                     fetchData()
                                                                 }}

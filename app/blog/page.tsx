@@ -9,12 +9,15 @@ export const metadata: Metadata = {
     description: "Latest news, updates, and insights from the Stremini team about AI security and productivity.",
 }
 
+export const dynamic = "force-dynamic"
+
 async function getBlogPosts(): Promise<BlogPost[]> {
     const { data, error } = await supabase
         .from("blog_posts")
         .select("*")
         .eq("is_published", true)
-        .order("published_at", { ascending: false })
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
 
     if (error) {
         console.error("Error fetching blog posts:", error)
