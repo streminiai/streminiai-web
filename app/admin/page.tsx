@@ -317,6 +317,224 @@ function TeamMemberModal({
     )
 }
 
+// Blog Post Modal
+function BlogPostModal({
+    post,
+    onClose,
+    onSave,
+}: {
+    post: BlogPost | null
+    onClose: () => void
+    onSave: (_data: Partial<BlogPost>) => void
+}) {
+    const [formData, setFormData] = useState({
+        title: post?.title || "",
+        slug: post?.slug || "",
+        excerpt: post?.excerpt || "",
+        content: post?.content || "",
+        author: post?.author || "Stremini Team",
+        featured_image_url: post?.featured_image_url || "",
+        tags: post?.tags?.join(", ") || "",
+        is_published: post?.is_published || false,
+    })
+    const [saving, setSaving] = useState(false)
+    const [previewMode, setPreviewMode] = useState(false)
+
+    // Auto-generate slug from title
+    const generateSlug = (title: string) => {
+        return title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "")
+    }
+
+    const handleTitleChange = (title: string) => {
+        setFormData({
+            ...formData,
+            title,
+            slug: post ? formData.slug : generateSlug(title),
+        })
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setSaving(true)
+        await onSave({
+            ...formData,
+            tags: formData.tags.split(",").map((t) => t.trim()).filter(Boolean),
+            published_at: formData.is_published ? new Date().toISOString() : null,
+        })
+        setSaving(false)
+    }
+
+    return (
+        <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
+            <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+            <motion.div
+                className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-3xl relative z-10 max-h-[90vh] overflow-y-auto"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+            >
+                <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+                    <X className="w-5 h-5" />
+                </button>
+
+                <h3 className="text-xl font-bold text-white mb-6">
+                    {post ? "Edit Blog Post" : "Create Blog Post"}
+                </h3>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Title */}
+                    <div>
+                        <label className="block text-sm text-slate-400 mb-2">Title *</label>
+                        <input
+                            type="text"
+                            value={formData.title}
+                            onChange={(e) => handleTitleChange(e.target.value)}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                            required
+                            placeholder="Your blog post title"
+                        />
+                    </div>
+
+                    {/* Slug */}
+                    <div>
+                        <label className="block text-sm text-slate-400 mb-2">Slug (URL)</label>
+                        <div className="flex items-center gap-2">
+                            <span className="text-slate-500">/blog/</span>
+                            <input
+                                type="text"
+                                value={formData.slug}
+                                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                                placeholder="url-friendly-slug"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Excerpt */}
+                    <div>
+                        <label className="block text-sm text-slate-400 mb-2">Excerpt (Short Summary)</label>
+                        <textarea
+                            value={formData.excerpt}
+                            onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 resize-none"
+                            rows={2}
+                            placeholder="Brief summary for blog cards..."
+                        />
+                    </div>
+
+                    {/* Content with Preview Toggle */}
+                    <div>
+                        <div className="flex items-center justify-between mb-2">
+                            <label className="block text-sm text-slate-400">Content *</label>
+                            <button
+                                type="button"
+                                onClick={() => setPreviewMode(!previewMode)}
+                                className="text-xs px-3 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                            >
+                                {previewMode ? "Edit" : "Preview"}
+                            </button>
+                        </div>
+                        {previewMode ? (
+                            <div
+                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white min-h-[200px] prose prose-invert max-w-none"
+                                dangerouslySetInnerHTML={{ __html: formData.content || "<p class='text-slate-500'>No content yet...</p>" }}
+                            />
+                        ) : (
+                            <textarea
+                                value={formData.content}
+                                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 resize-none font-mono text-sm"
+                                rows={8}
+                                required
+                                placeholder="Write your blog content here (HTML supported)..."
+                            />
+                        )}
+                        <p className="text-xs text-slate-500 mt-1">Supports HTML. Use &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;strong&gt;, etc.</p>
+                    </div>
+
+                    {/* Tags and Image URL */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm text-slate-400 mb-2">Tags (comma-separated)</label>
+                            <input
+                                type="text"
+                                value={formData.tags}
+                                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                                placeholder="AI, Security, News"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm text-slate-400 mb-2">Featured Image URL</label>
+                            <input
+                                type="url"
+                                value={formData.featured_image_url}
+                                onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                                placeholder="https://..."
+                            />
+                        </div>
+                    </div>
+
+                    {/* Author */}
+                    <div>
+                        <label className="block text-sm text-slate-400 mb-2">Author</label>
+                        <input
+                            type="text"
+                            value={formData.author}
+                            onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                        />
+                    </div>
+
+                    {/* Publish Toggle */}
+                    <div className="flex items-center gap-3 p-4 bg-slate-800 rounded-xl">
+                        <input
+                            type="checkbox"
+                            id="publish-toggle"
+                            checked={formData.is_published}
+                            onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-700 border-slate-600 text-purple-500 focus:ring-purple-500"
+                        />
+                        <label htmlFor="publish-toggle" className="text-white">
+                            Publish immediately
+                        </label>
+                        <span className="text-xs text-slate-400 ml-auto">
+                            {formData.is_published ? "Will be visible to public" : "Saved as draft"}
+                        </span>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 py-3 px-4 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium disabled:opacity-50"
+                        >
+                            {saving ? "Saving..." : post ? "Update Post" : "Create Post"}
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </motion.div>
+    )
+}
+
 // Main Dashboard
 function Dashboard() {
     const [activeTab, setActiveTab] = useState<Tab>("waitlist")
@@ -328,6 +546,8 @@ function Dashboard() {
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all")
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
     const [showMemberModal, setShowMemberModal] = useState(false)
+    const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
+    const [showPostModal, setShowPostModal] = useState(false)
 
     const fetchData = useCallback(async () => {
         setLoading(true)
@@ -399,6 +619,31 @@ function Dashboard() {
         if (!confirm("Delete this team member?")) return
         const { error } = await supabase.from("team_members").delete().eq("id", id)
         if (!error) setTeamMembers((prev) => prev.filter((m) => m.id !== id))
+    }
+
+    const saveBlogPost = async (data: Partial<BlogPost>) => {
+        if (selectedPost) {
+            // Update existing post
+            const { error } = await supabase
+                .from("blog_posts")
+                .update({ ...data, updated_at: new Date().toISOString() })
+                .eq("id", selectedPost.id)
+            if (!error) {
+                setBlogPosts((prev) => prev.map((p) => (p.id === selectedPost.id ? { ...p, ...data } as BlogPost : p)))
+            }
+        } else {
+            // Create new post
+            const { data: newPost, error } = await supabase
+                .from("blog_posts")
+                .insert([data])
+                .select()
+                .single()
+            if (!error && newPost) {
+                setBlogPosts((prev) => [newPost, ...prev])
+            }
+        }
+        setShowPostModal(false)
+        setSelectedPost(null)
     }
 
     const exportCSV = () => {
@@ -673,8 +918,8 @@ function Dashboard() {
                             <h2 className="text-lg font-semibold">Blog Posts</h2>
                             <button
                                 onClick={() => {
-                                    // TODO: Implement blog post modal
-                                    alert("Blog post creation coming soon! Use Supabase directly for now.")
+                                    setSelectedPost(null)
+                                    setShowPostModal(true)
                                 }}
                                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
                             >
@@ -748,8 +993,8 @@ function Dashboard() {
                                                             </button>
                                                             <button
                                                                 onClick={() => {
-                                                                    // TODO: Implement edit modal
-                                                                    alert("Blog post editing coming soon! Use Supabase directly for now.")
+                                                                    setSelectedPost(post)
+                                                                    setShowPostModal(true)
                                                                 }}
                                                                 className="p-2 rounded-lg hover:bg-slate-700 text-blue-400"
                                                                 title="Edit"
@@ -790,6 +1035,20 @@ function Dashboard() {
                             setSelectedMember(null)
                         }}
                         onSave={saveTeamMember}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Blog Post Modal */}
+            <AnimatePresence>
+                {showPostModal && (
+                    <BlogPostModal
+                        post={selectedPost}
+                        onClose={() => {
+                            setShowPostModal(false)
+                            setSelectedPost(null)
+                        }}
+                        onSave={saveBlogPost}
                     />
                 )}
             </AnimatePresence>
