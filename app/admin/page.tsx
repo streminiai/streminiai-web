@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import Link from "next/link"
 import {
     Users,
     Check,
@@ -27,6 +28,7 @@ import {
     EyeOff,
 } from "lucide-react"
 import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost } from "@/lib/supabase"
+import { BlogEditor } from "@/components/blog-editor"
 
 type Tab = "waitlist" | "team" | "blog"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
@@ -338,7 +340,6 @@ function BlogPostModal({
         is_published: post?.is_published || false,
     })
     const [saving, setSaving] = useState(false)
-    const [previewMode, setPreviewMode] = useState(false)
 
     // Auto-generate slug from title
     const generateSlug = (title: string) => {
@@ -430,34 +431,14 @@ function BlogPostModal({
                         />
                     </div>
 
-                    {/* Content with Preview Toggle */}
+                    {/* Content Editor */}
                     <div>
-                        <div className="flex items-center justify-between mb-2">
-                            <label className="block text-sm text-slate-400">Content *</label>
-                            <button
-                                type="button"
-                                onClick={() => setPreviewMode(!previewMode)}
-                                className="text-xs px-3 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
-                            >
-                                {previewMode ? "Edit" : "Preview"}
-                            </button>
-                        </div>
-                        {previewMode ? (
-                            <div
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white min-h-[200px] prose prose-invert max-w-none"
-                                dangerouslySetInnerHTML={{ __html: formData.content || "<p class='text-slate-500'>No content yet...</p>" }}
-                            />
-                        ) : (
-                            <textarea
-                                value={formData.content}
-                                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 resize-none font-mono text-sm"
-                                rows={8}
-                                required
-                                placeholder="Write your blog content here (HTML supported)..."
-                            />
-                        )}
-                        <p className="text-xs text-slate-500 mt-1">Supports HTML. Use &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;strong&gt;, etc.</p>
+                        <label className="block text-sm text-slate-400 mb-2">Content *</label>
+                        <BlogEditor
+                            value={formData.content}
+                            onChange={(content) => setFormData({ ...formData, content })}
+                            placeholder="Write your blog content here using Markdown..."
+                        />
                     </div>
 
                     {/* Tags and Image URL */}
@@ -663,9 +644,24 @@ function Dashboard() {
         window.location.reload()
     }
 
-    const filteredEntries = entries
-        .filter((e) => filterStatus === "all" || e.status === filterStatus)
-        .filter((e) => e.email.toLowerCase().includes(searchQuery.toLowerCase()) || (e.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()))
+    const filteredEntries = useMemo(() => {
+        return entries
+            .filter((e) => filterStatus === "all" || e.status === filterStatus)
+            .filter((e) => e.email.toLowerCase().includes(searchQuery.toLowerCase()) || (e.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()))
+    }, [entries, filterStatus, searchQuery])
+
+    const filteredBlogPosts = useMemo(() => {
+        return blogPosts.filter((post) => {
+            const matchesSearch =
+                post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (post.excerpt?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+            const matchesStatus =
+                filterStatus === "all" ||
+                (filterStatus === "approved" && post.is_published) ||
+                (filterStatus === "pending" && !post.is_published)
+            return matchesSearch && matchesStatus
+        })
+    }, [blogPosts, filterStatus, searchQuery])
 
     const categoryIcons: Record<string, React.ElementType> = {
         founder: Briefcase,
@@ -914,18 +910,43 @@ function Dashboard() {
                 {/* Blog Tab */}
                 {activeTab === "blog" && (
                     <>
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-lg font-semibold">Blog Posts</h2>
-                            <button
-                                onClick={() => {
-                                    setSelectedPost(null)
-                                    setShowPostModal(true)
-                                }}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
-                            >
-                                <Plus className="w-4 h-4" />
-                                New Post
-                            </button>
+                        <div className="flex flex-col md:flex-row gap-4 mb-6">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search posts by title or excerpt..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                                />
+                            </div>
+
+                            <div className="flex gap-3">
+                                <div className="relative">
+                                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <select
+                                        value={filterStatus}
+                                        onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
+                                        className="bg-slate-900 border border-slate-800 rounded-xl pl-11 pr-8 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500"
+                                    >
+                                        <option value="all">All Status</option>
+                                        <option value="approved">Published</option>
+                                        <option value="pending">Drafts</option>
+                                    </select>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setSelectedPost(null)
+                                        setShowPostModal(true)
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    New Post
+                                </button>
+                            </div>
                         </div>
 
                         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
@@ -946,14 +967,14 @@ function Dashboard() {
                                                     <RefreshCw className="w-6 h-6 animate-spin mx-auto text-slate-400" />
                                                 </td>
                                             </tr>
-                                        ) : blogPosts.length === 0 ? (
+                                        ) : filteredBlogPosts.length === 0 ? (
                                             <tr>
                                                 <td colSpan={4} className="text-center py-12 text-slate-400">
-                                                    No blog posts yet
+                                                    No blog posts found
                                                 </td>
                                             </tr>
                                         ) : (
-                                            blogPosts.map((post) => (
+                                            filteredBlogPosts.map((post) => (
                                                 <tr key={post.id} className="border-b border-slate-800/50 hover:bg-slate-800/50">
                                                     <td className="px-6 py-4">
                                                         <div>
@@ -1012,6 +1033,14 @@ function Dashboard() {
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                             </button>
+                                                            <Link
+                                                                href={`/blog/${post.slug}`}
+                                                                target="_blank"
+                                                                className="p-2 rounded-lg hover:bg-slate-700 text-purple-400"
+                                                                title="View Live"
+                                                            >
+                                                                <Eye className="w-4 h-4" />
+                                                            </Link>
                                                         </div>
                                                     </td>
                                                 </tr>

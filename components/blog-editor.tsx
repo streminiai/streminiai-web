@@ -25,6 +25,14 @@ export function BlogEditor({ value, onChange, placeholder = "Write your blog con
             .replace(/\*(.*?)\*/gim, '<em class="italic">$1</em>')
             // Links
             .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" class="text-primary underline">$1</a>')
+            // Lists
+            .replace(/^\* (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
+            .replace(/^\- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
+            .replace(/(<li.*<\/li>)/gim, '<ul class="my-4">$1</ul>')
+            // Code blocks
+            .replace(/```([\s\S]*?)```/gim, '<pre class="bg-slate-900 p-4 rounded-lg my-4 font-mono text-sm overflow-x-auto"><code>$1</code></pre>')
+            // Inline code
+            .replace(/`(.*?)`/gim, '<code class="bg-slate-900 px-1 rounded font-mono text-sm">$1</code>')
             // Line breaks
             .replace(/\n/gim, '<br />')
 
