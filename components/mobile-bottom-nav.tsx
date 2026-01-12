@@ -1,11 +1,12 @@
 "use client"
 import Link from "next/link"
-import { Home, Heart, Users, ImageIcon, Info } from "lucide-react"
+import { Home, Heart, Users, ImageIcon, Info, BookOpen } from "lucide-react"
 import { useState } from "react"
 
 const items = [
   { label: "Home", href: "/", icon: Home },
   { label: "Gallery", href: "/gallery", icon: ImageIcon },
+  { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Team", href: "/team", icon: Users },
   { label: "About", href: "/about", icon: Info },
   { label: "Wishlist", href: "/wishlist", icon: Heart },
@@ -15,7 +16,7 @@ export function MobileBottomNav() {
   const [active, setActive] = useState("/")
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 backdrop-blur-lg md:hidden">
-      <div className="mx-auto grid max-w-3xl grid-cols-5 px-2 py-3">
+      <div className="mx-auto grid max-w-3xl grid-cols-6 px-2 py-3">
         {items.map((item) => {
           const Icon = item.icon
           const isActive = active === item.href
@@ -24,9 +25,8 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               onClick={() => setActive(item.href)}
-              className={`flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
               aria-current={isActive ? "page" : undefined}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />

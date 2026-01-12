@@ -32,3 +32,11 @@ The goal was to enhance the website with premium interactive features to create 
 5. **Styling**: Updated `globals.css` with utility classes for glassmorphism and glowing borders.
 6. **Integration**: Applied these features to the Hero section and Features grid.
 7. **Verification**: Confirmed with successful linting and production build.
+
+## Planned: AI Backend Integration
+Integrating the Stremini AI Backend to enable advanced AI features like chat, keyboard automation, and image generation.
+
+### Proposed Steps:
+1. **API Utility**: Create a centralized utility for backend communication.
+2. **Admin Tester**: Implement a testing interface in the admin dashboard for developers.
+3. **Feature Integration**: Gradually integrate backend endpoints into user-facing features.

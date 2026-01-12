@@ -29,8 +29,9 @@ import {
 } from "lucide-react"
 import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost } from "@/lib/supabase"
 import { BlogEditor } from "@/components/blog-editor"
+import { AIBackendTester } from "@/components/ai-backend-tester"
 
-type Tab = "waitlist" | "team" | "blog"
+type Tab = "waitlist" | "team" | "blog" | "ai-backend"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
 
 // Login component
@@ -125,12 +126,15 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 }
 
 // Stats cards
-function StatsCards({ entries, teamCount, blogCount }: { entries: WaitlistEntry[]; teamCount: number; blogCount: number }) {
+function StatsCards({ entries, teamMembers, blogCount }: { entries: WaitlistEntry[]; teamMembers: TeamMember[]; blogCount: number }) {
+    // Count unique team members by name to avoid double counting people in multiple categories
+    const uniqueTeamCount = new Set(teamMembers.map(m => m.name)).size
+
     const stats = {
         total: entries.length,
         pending: entries.filter((e) => e.status === "pending").length,
         approved: entries.filter((e) => e.status === "approved").length,
-        team: teamCount,
+        team: uniqueTeamCount,
         blog: blogCount,
     }
 
@@ -184,6 +188,7 @@ function TeamMemberModal({
         image_url: member?.image_url || "",
         linkedin_url: member?.linkedin_url || "",
         twitter_url: member?.twitter_url || "",
+        instagram_url: member?.instagram_url || "",
         display_order: member?.display_order || 0,
     })
     const [saving, setSaving] = useState(false)
@@ -282,6 +287,15 @@ function TeamMemberModal({
                                 type="url"
                                 value={formData.twitter_url}
                                 onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm text-slate-400 mb-2">Instagram URL</label>
+                            <input
+                                type="url"
+                                value={formData.instagram_url}
+                                onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
                                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
                             />
                         </div>
@@ -691,7 +705,7 @@ function Dashboard() {
 
             {/* Main content */}
             <div className="max-w-7xl mx-auto px-6 py-8">
-                <StatsCards entries={entries} teamCount={teamMembers.length} blogCount={blogPosts.length} />
+                <StatsCards entries={entries} teamMembers={teamMembers} blogCount={blogPosts.length} />
 
                 {/* Tabs */}
                 <div className="flex gap-2 mb-6">
@@ -718,6 +732,14 @@ function Dashboard() {
                     >
                         <BookOpen className="w-4 h-4 inline mr-2" />
                         Blog
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("ai-backend")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "ai-backend" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                            }`}
+                    >
+                        <Zap className="w-4 h-4 inline mr-2" />
+                        AI Backend
                     </button>
                 </div>
 
@@ -1055,6 +1077,11 @@ function Dashboard() {
                             </div>
                         </div>
                     </>
+                )}
+
+                {/* AI Backend Tab */}
+                {activeTab === "ai-backend" && (
+                    <AIBackendTester />
                 )}
             </div>
 

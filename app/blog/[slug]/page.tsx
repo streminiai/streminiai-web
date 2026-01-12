@@ -12,18 +12,24 @@ interface PageProps {
 export const dynamic = "force-dynamic"
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
-    const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single()
+    try {
+        const { data, error } = await supabase
+            .from("blog_posts")
+            .select("*")
+            .eq("slug", slug)
+            .eq("is_published", true)
+            .maybeSingle()
 
-    if (error || !data) {
+        if (error) {
+            console.error("Supabase error fetching blog post:", error)
+            return null
+        }
+
+        return data
+    } catch (err) {
+        console.error("Unexpected error fetching blog post:", err)
         return null
     }
-
-    return data
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
