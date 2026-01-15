@@ -80,3 +80,21 @@ export const categoryLabels: Record<TeamMember['category'], string> = {
     'marketing': 'Marketing Team',
     'research': 'Research & Operations',
 }
+
+export type UserRole = 'superadmin' | 'blog_editor' | 'team_editor' | 'waitlist_viewer'
+
+export async function getUserRole(userId: string): Promise<UserRole | null> {
+    try {
+        const { data, error } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', userId)
+            .single()
+
+        if (error) throw error
+        return data?.role as UserRole
+    } catch (error) {
+        console.error('Error fetching user role:', error)
+        return null
+    }
+}

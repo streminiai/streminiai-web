@@ -28,8 +28,9 @@ import {
     EyeOff,
     Settings,
     Star,
+    Upload,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole } from "@/lib/supabase"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
 
@@ -194,6 +195,59 @@ function TeamMemberModal({
         display_order: member?.display_order || 0,
     })
     const [saving, setSaving] = useState(false)
+    const [uploading, setUploading] = useState(false)
+    const [dragActive, setDragActive] = useState(false)
+
+    const handleImageUpload = async (file: File) => {
+        try {
+            setUploading(true)
+            const fileExt = file.name.split('.').pop()
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`
+            const filePath = `team/${fileName}`
+
+            const { error: uploadError } = await supabase.storage
+                .from('team-pictures')
+                .upload(filePath, file)
+
+            if (uploadError) throw uploadError
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('team-pictures')
+                .getPublicUrl(filePath)
+
+            setFormData({ ...formData, image_url: publicUrl })
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            alert('Error uploading image')
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    const handleDrag = (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (e.type === "dragenter" || e.type === "dragover") {
+            setDragActive(true)
+        } else if (e.type === "dragleave") {
+            setDragActive(false)
+        }
+    }
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setDragActive(false)
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleImageUpload(e.dataTransfer.files[0])
+        }
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            handleImageUpload(e.target.files[0])
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -263,14 +317,65 @@ function TeamMemberModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm text-slate-400 mb-2">Photo URL</label>
-                        <input
-                            type="url"
-                            value={formData.image_url}
-                            onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
-                            placeholder="https://..."
-                        />
+                        <label className="block text-sm text-slate-400 mb-2">Profile Picture</label>
+                        <div
+                            className={`relative border-2 border-dashed rounded-xl p-4 transition-colors ${dragActive ? "border-purple-500 bg-purple-500/10" : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
+                                }`}
+                            onDragEnter={handleDrag}
+                            onDragLeave={handleDrag}
+                            onDragOver={handleDrag}
+                            onDrop={handleDrop}
+                        >
+                            {formData.image_url ? (
+                                <div className="relative group aspect-square w-32 mx-auto">
+                                    <Image
+                                        src={formData.image_url}
+                                        alt="Preview"
+                                        width={128}
+                                        height={128}
+                                        className="rounded-xl object-cover w-full h-full"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, image_url: "" })}
+                                        className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="text-center py-4">
+                                    <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-3">
+                                        {uploading ? (
+                                            <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
+                                        ) : (
+                                            <Upload className="w-6 h-6 text-slate-400" />
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-slate-400 mb-1">
+                                        <span className="text-purple-400 font-medium">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p className="text-xs text-slate-500">PNG, JPG or WebP (max. 2MB)</p>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onChange={handleFileChange}
+                                accept="image/*"
+                                disabled={uploading}
+                            />
+                        </div>
+                        <div className="mt-2">
+                            <label className="block text-xs text-slate-500 mb-1">Or enter Photo URL</label>
+                            <input
+                                type="url"
+                                value={formData.image_url}
+                                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                                placeholder="https://..."
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -547,10 +652,22 @@ function Dashboard() {
     const [showPostModal, setShowPostModal] = useState(false)
     const [siteSettings, setSiteSettings] = useState<SiteSetting[]>([])
     const [savingSettings, setSavingSettings] = useState(false)
+    const [userRole, setUserRole] = useState<UserRole | null>(null)
 
     const fetchData = useCallback(async () => {
         setLoading(true)
         try {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session?.user) {
+                const role = await getUserRole(session.user.id)
+                setUserRole(role)
+
+                // Set initial tab based on role
+                if (role === 'blog_editor') setActiveTab('blog')
+                else if (role === 'team_editor') setActiveTab('team')
+                else if (role === 'waitlist_viewer') setActiveTab('waitlist')
+            }
+
             const [waitlistRes, teamRes, blogRes, settingsRes] = await Promise.all([
                 supabase.from("waitlist").select("*").order("created_at", { ascending: false }),
                 supabase.from("team_members").select("*").order("display_order", { ascending: true }),
@@ -767,46 +884,56 @@ function Dashboard() {
 
                 {/* Tabs */}
                 <div className="flex gap-2 mb-6">
-                    <button
-                        onClick={() => setActiveTab("waitlist")}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "waitlist" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                            }`}
-                    >
-                        <Mail className="w-4 h-4 inline mr-2" />
-                        Waitlist
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("team")}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "team" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                            }`}
-                    >
-                        <Users className="w-4 h-4 inline mr-2" />
-                        Team
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("blog")}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "blog" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                            }`}
-                    >
-                        <BookOpen className="w-4 h-4 inline mr-2" />
-                        Blog
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("ai-backend")}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "ai-backend" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                            }`}
-                    >
-                        <Zap className="w-4 h-4 inline mr-2" />
-                        AI Backend
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("settings")}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "settings" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                            }`}
-                    >
-                        <Settings className="w-4 h-4 inline mr-2" />
-                        Settings
-                    </button>
+                    {(userRole === 'superadmin' || userRole === 'waitlist_viewer') && (
+                        <button
+                            onClick={() => setActiveTab("waitlist")}
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "waitlist" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                }`}
+                        >
+                            <Mail className="w-4 h-4 inline mr-2" />
+                            Waitlist
+                        </button>
+                    )}
+                    {(userRole === 'superadmin' || userRole === 'team_editor') && (
+                        <button
+                            onClick={() => setActiveTab("team")}
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "team" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                }`}
+                        >
+                            <Users className="w-4 h-4 inline mr-2" />
+                            Team
+                        </button>
+                    )}
+                    {(userRole === 'superadmin' || userRole === 'blog_editor') && (
+                        <button
+                            onClick={() => setActiveTab("blog")}
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "blog" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                }`}
+                        >
+                            <BookOpen className="w-4 h-4 inline mr-2" />
+                            Blog
+                        </button>
+                    )}
+                    {userRole === 'superadmin' && (
+                        <>
+                            <button
+                                onClick={() => setActiveTab("ai-backend")}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "ai-backend" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                    }`}
+                            >
+                                <Zap className="w-4 h-4 inline mr-2" />
+                                AI Backend
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("settings")}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "settings" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                    }`}
+                            >
+                                <Settings className="w-4 h-4 inline mr-2" />
+                                Settings
+                            </button>
+                        </>
+                    )}
                 </div>
 
                 {/* Waitlist Tab */}
@@ -900,19 +1027,23 @@ function Dashboard() {
                                                     <td className="px-6 py-4 text-slate-400 text-sm">{new Date(entry.created_at).toLocaleDateString()}</td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-1">
-                                                            {entry.status !== "approved" && (
-                                                                <button onClick={() => updateWaitlistStatus(entry.id, "approved")} className="p-2 rounded-lg hover:bg-slate-700 text-green-400" title="Approve">
-                                                                    <Check className="w-4 h-4" />
-                                                                </button>
+                                                            {(userRole === 'superadmin' || userRole === 'waitlist_viewer') && (
+                                                                <>
+                                                                    {entry.status !== "approved" && (
+                                                                        <button onClick={() => updateWaitlistStatus(entry.id, "approved")} className="p-2 rounded-lg hover:bg-slate-700 text-green-400" title="Approve">
+                                                                            <Check className="w-4 h-4" />
+                                                                        </button>
+                                                                    )}
+                                                                    {entry.status !== "removed" && (
+                                                                        <button onClick={() => updateWaitlistStatus(entry.id, "removed")} className="p-2 rounded-lg hover:bg-slate-700 text-red-400" title="Remove">
+                                                                            <X className="w-4 h-4" />
+                                                                        </button>
+                                                                    )}
+                                                                    <button onClick={() => deleteWaitlistEntry(entry.id)} className="p-2 rounded-lg hover:bg-slate-700 text-slate-400" title="Delete">
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </>
                                                             )}
-                                                            {entry.status !== "removed" && (
-                                                                <button onClick={() => updateWaitlistStatus(entry.id, "removed")} className="p-2 rounded-lg hover:bg-slate-700 text-red-400" title="Remove">
-                                                                    <X className="w-4 h-4" />
-                                                                </button>
-                                                            )}
-                                                            <button onClick={() => deleteWaitlistEntry(entry.id)} className="p-2 rounded-lg hover:bg-slate-700 text-slate-400" title="Delete">
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -930,16 +1061,18 @@ function Dashboard() {
                     <>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-semibold">Team Members</h2>
-                            <button
-                                onClick={() => {
-                                    setSelectedMember(null)
-                                    setShowMemberModal(true)
-                                }}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
-                            >
-                                <Plus className="w-4 h-4" />
-                                Add Member
-                            </button>
+                            {(userRole === 'superadmin' || userRole === 'team_editor') && (
+                                <button
+                                    onClick={() => {
+                                        setSelectedMember(null)
+                                        setShowMemberModal(true)
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Add Member
+                                </button>
+                            )}
                         </div>
 
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -969,18 +1102,22 @@ function Dashboard() {
                                                 </div>
                                             </div>
                                             <div className="flex gap-1">
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedMember(member)
-                                                        setShowMemberModal(true)
-                                                    }}
-                                                    className="p-2 rounded-lg hover:bg-slate-800 text-slate-400"
-                                                >
-                                                    <Edit className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => deleteTeamMember(member.id)} className="p-2 rounded-lg hover:bg-slate-800 text-red-400">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                {(userRole === 'superadmin' || userRole === 'team_editor') && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => {
+                                                                setSelectedMember(member)
+                                                                setShowMemberModal(true)
+                                                            }}
+                                                            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400"
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </button>
+                                                        <button onClick={() => deleteTeamMember(member.id)} className="p-2 rounded-lg hover:bg-slate-800 text-red-400">
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -1024,16 +1161,18 @@ function Dashboard() {
                                     </select>
                                 </div>
 
-                                <button
-                                    onClick={() => {
-                                        setSelectedPost(null)
-                                        setShowPostModal(true)
-                                    }}
-                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    New Post
-                                </button>
+                                {(userRole === 'superadmin' || userRole === 'blog_editor') && (
+                                    <button
+                                        onClick={() => {
+                                            setSelectedPost(null)
+                                            setShowPostModal(true)
+                                        }}
+                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        New Post
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -1087,44 +1226,48 @@ function Dashboard() {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-1">
-                                                            <button
-                                                                onClick={async () => {
-                                                                    const newStatus = !post.is_published
-                                                                    await supabase
-                                                                        .from("blog_posts")
-                                                                        .update({
-                                                                            is_published: newStatus,
-                                                                            published_at: newStatus ? new Date().toISOString() : post.published_at
-                                                                        })
-                                                                        .eq("id", post.id)
-                                                                    fetchData()
-                                                                }}
-                                                                className="p-2 rounded-lg hover:bg-slate-700 text-slate-400"
-                                                                title={post.is_published ? "Unpublish" : "Publish"}
-                                                            >
-                                                                {post.is_published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                                            </button>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setSelectedPost(post)
-                                                                    setShowPostModal(true)
-                                                                }}
-                                                                className="p-2 rounded-lg hover:bg-slate-700 text-blue-400"
-                                                                title="Edit"
-                                                            >
-                                                                <Edit className="w-4 h-4" />
-                                                            </button>
-                                                            <button
-                                                                onClick={async () => {
-                                                                    if (!confirm("Delete this post permanently?")) return
-                                                                    await supabase.from("blog_posts").delete().eq("id", post.id)
-                                                                    fetchData()
-                                                                }}
-                                                                className="p-2 rounded-lg hover:bg-slate-700 text-red-400"
-                                                                title="Delete"
-                                                            >
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </button>
+                                                            {(userRole === 'superadmin' || userRole === 'blog_editor') && (
+                                                                <>
+                                                                    <button
+                                                                        onClick={async () => {
+                                                                            const newStatus = !post.is_published
+                                                                            await supabase
+                                                                                .from("blog_posts")
+                                                                                .update({
+                                                                                    is_published: newStatus,
+                                                                                    published_at: newStatus ? new Date().toISOString() : post.published_at
+                                                                                })
+                                                                                .eq("id", post.id)
+                                                                            fetchData()
+                                                                        }}
+                                                                        className="p-2 rounded-lg hover:bg-slate-700 text-slate-400"
+                                                                        title={post.is_published ? "Unpublish" : "Publish"}
+                                                                    >
+                                                                        {post.is_published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setSelectedPost(post)
+                                                                            setShowPostModal(true)
+                                                                        }}
+                                                                        className="p-2 rounded-lg hover:bg-slate-700 text-blue-400"
+                                                                        title="Edit"
+                                                                    >
+                                                                        <Edit className="w-4 h-4" />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={async () => {
+                                                                            if (!confirm("Delete this post permanently?")) return
+                                                                            await supabase.from("blog_posts").delete().eq("id", post.id)
+                                                                            fetchData()
+                                                                        }}
+                                                                        className="p-2 rounded-lg hover:bg-slate-700 text-red-400"
+                                                                        title="Delete"
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </>
+                                                            )}
                                                             <Link
                                                                 href={`/blog/${post.slug}`}
                                                                 target="_blank"
