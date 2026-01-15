@@ -91,16 +91,13 @@ export type UserRoleView = {
     updated_at: string | null
 }
 
-export async function getUserRole(userId: string): Promise<UserRole | null> {
+export async function getUserRole(): Promise<UserRole | null> {
     try {
         const { data, error } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', userId)
-            .single()
+            .rpc('get_my_role')
 
         if (error) throw error
-        return data?.role as UserRole
+        return data as UserRole
     } catch (error) {
         console.error('Error fetching user role:', error)
         return null
@@ -110,9 +107,7 @@ export async function getUserRole(userId: string): Promise<UserRole | null> {
 export async function getAllUserRoles(): Promise<UserRoleView[]> {
     try {
         const { data, error } = await supabase
-            .from('user_roles_view')
-            .select('*')
-            .order('email', { ascending: true })
+            .rpc('get_all_user_roles')
 
         if (error) throw error
         return data as UserRoleView[]

@@ -49,6 +49,22 @@ begin
 end;
 $$ language plpgsql security definer;
 
+-- Function to get current user's role
+create or replace function public.get_my_role()
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  return (
+    select role from public.user_roles
+    where user_id = auth.uid()
+    limit 1
+  );
+end;
+$$;
+
 -- Update RLS policies for other tables to use roles
 
 -- Blog Posts
@@ -79,19 +95,39 @@ create policy "Allow superadmin and waitlist_viewer manage" on public.waitlist
   for all
   using (public.is_superadmin() or public.has_role('waitlist_viewer'));
 
--- View to list users and their roles (accessible only to superadmins)
-create or replace view public.user_roles_view as
-select 
-    au.id as user_id,
-    au.email,
-    ur.role,
-    ur.created_at,
-    ur.updated_at
-from auth.users au
-left join public.user_roles ur on au.id = ur.user_id;
+-- Function to list users and their roles (accessible only to superadmins)
+create or replace function public.get_all_user_roles()
+returns table (
+    user_id uuid,
+    email text,
+    role text,
+    created_at timestamptz,
+    updated_at timestamptz
+) 
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    -- Check if the caller is a superadmin
+    if not public.is_superadmin() then
+        return;
+    end if;
 
--- Grant access to the view
-grant select on public.user_roles_view to authenticated;
+    return query
+    select 
+        au.id,
+        au.email::text,
+        ur.role,
+        ur.created_at,
+        ur.updated_at
+    from auth.users au
+    left join public.user_roles ur on au.id = ur.user_id;
+end;
+$$;
+
+-- Drop the insecure view if it exists
+drop view if exists public.user_roles_view;
 
 -- Note: To manually assign superadmin from SQL:
 -- INSERT INTO public.user_roles (user_id, role) VALUES ('YOUR_USER_ID', 'superadmin') ON CONFLICT (user_id) DO UPDATE SET role = 'superadmin';

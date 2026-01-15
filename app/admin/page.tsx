@@ -662,7 +662,7 @@ function Dashboard() {
         try {
             const { data: { session } } = await supabase.auth.getSession()
             if (session?.user) {
-                const role = await getUserRole(session.user.id)
+                const role = await getUserRole()
                 setUserRole(role)
 
                 // Set initial tab based on role
@@ -962,6 +962,12 @@ function Dashboard() {
                                 Permissions
                             </button>
                         </>
+                    )}
+                    {!loading && userRole === null && (
+                        <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20 text-sm">
+                            <Shield className="w-4 h-4" />
+                            No role assigned. Please contact a superadmin.
+                        </div>
                     )}
                 </div>
 
