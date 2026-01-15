@@ -11,11 +11,13 @@ create table if not exists public.user_roles (
 alter table public.user_roles enable row level security;
 
 -- Policy: Users can read their own role
+drop policy if exists "Users can read own role" on public.user_roles;
 create policy "Users can read own role" on public.user_roles
   for select
   using (auth.uid() = user_id);
 
 -- Policy: Superadmins can manage all roles
+drop policy if exists "Superadmins can manage roles" on public.user_roles;
 create policy "Superadmins can manage roles" on public.user_roles
   for all
   using (
