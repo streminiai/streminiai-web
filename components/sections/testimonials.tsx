@@ -2,9 +2,11 @@
 
 import { Star, Users, ThumbsUp, MessageSquare } from "lucide-react"
 import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
 
-// Real survey data from user feedback
-const stats = {
+// Initial fallback/default survey data
+const defaultStats = {
   averageRating: 3.91,
   totalResponses: 35,
   ratings: [
@@ -16,18 +18,43 @@ const stats = {
   ],
   dailyUseIntent: { yes: 75, no: 0, maybe: 25 },
   onScreenAccessComfort: { yes: 87.5, no: 0, maybe: 12.5 },
+  topFeedback: [
+    "Floating features",
+    "Reminders and to do list",
+    "It working as a digital bodyguard",
+    "The on screen chatbot and AI keyboard",
+    "Voice control",
+    "Automation of tasks such as sending messages or checking emails",
+  ]
 }
 
-const topFeedback = [
-  "Floating features",
-  "Reminders and to do list",
-  "It working as a digital bodyguard",
-  "The on screen chatbot and AI keyboard",
-  "Voice control",
-  "Automation of tasks such as sending messages or checking emails",
-]
-
 export function Testimonials() {
+  const [stats, setStats] = useState(defaultStats)
+  const [topFeedback, setTopFeedback] = useState(defaultStats.topFeedback)
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const { data, error } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "survey_stats")
+          .single()
+
+        if (error) throw error
+        if (data?.value) {
+          setStats(data.value)
+          if (data.value.topFeedback) {
+            setTopFeedback(data.value.topFeedback)
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching survey stats:", err)
+      }
+    }
+
+    fetchStats()
+  }, [])
   return (
     <div className="mx-auto max-w-6xl px-4">
       <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">User Feedback</h2>

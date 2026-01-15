@@ -56,6 +56,23 @@ export type BlogPost = {
     updated_at: string
 }
 
+export type SurveyStats = {
+    averageRating: number
+    totalResponses: number
+    ratings: { stars: number; count: number; percentage: number }[]
+    dailyUseIntent: { yes: number; no: number; maybe: number }
+    onScreenAccessComfort: { yes: number; no: number; maybe: number }
+    topFeedback: string[]
+}
+
+export type SiteSetting = {
+    id: string
+    key: string
+    value: Record<string, unknown> | SurveyStats
+    created_at: string
+    updated_at: string
+}
+
 export const categoryLabels: Record<TeamMember['category'], string> = {
     'founder': 'Founder',
     'co-founder': 'Co-Founders',

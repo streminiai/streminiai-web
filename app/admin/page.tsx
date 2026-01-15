@@ -26,12 +26,14 @@ import {
     BookOpen,
     Eye,
     EyeOff,
+    Settings,
+    Star,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats } from "@/lib/supabase"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
 
-type Tab = "waitlist" | "team" | "blog" | "ai-backend"
+type Tab = "waitlist" | "team" | "blog" | "ai-backend" | "settings"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
 
 // Login component
@@ -543,19 +545,23 @@ function Dashboard() {
     const [showMemberModal, setShowMemberModal] = useState(false)
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
     const [showPostModal, setShowPostModal] = useState(false)
+    const [siteSettings, setSiteSettings] = useState<SiteSetting[]>([])
+    const [savingSettings, setSavingSettings] = useState(false)
 
     const fetchData = useCallback(async () => {
         setLoading(true)
         try {
-            const [waitlistRes, teamRes, blogRes] = await Promise.all([
+            const [waitlistRes, teamRes, blogRes, settingsRes] = await Promise.all([
                 supabase.from("waitlist").select("*").order("created_at", { ascending: false }),
                 supabase.from("team_members").select("*").order("display_order", { ascending: true }),
                 supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
+                supabase.from("site_settings").select("*"),
             ])
 
             if (waitlistRes.data) setEntries(waitlistRes.data)
             if (teamRes.data) setTeamMembers(teamRes.data)
             if (blogRes.data) setBlogPosts(blogRes.data)
+            if (settingsRes.data) setSiteSettings(settingsRes.data)
         } catch (error) {
             console.error("Error fetching data:", error)
         } finally {
@@ -658,6 +664,58 @@ function Dashboard() {
         window.location.reload()
     }
 
+    const saveSurveyStats = async (stats: Record<string, unknown>) => {
+        setSavingSettings(true)
+        try {
+            const { error } = await supabase
+                .from("site_settings")
+                .upsert({ key: "survey_stats", value: stats, updated_at: new Date().toISOString() }, { onConflict: "key" })
+
+            if (error) throw error
+
+            // Update local state
+            setSiteSettings(prev => {
+                const existing = prev.find(s => s.key === "survey_stats")
+                if (existing) {
+                    return prev.map(s => s.key === "survey_stats" ? { ...s, value: stats } : s)
+                }
+                return [...prev, { key: "survey_stats", value: stats } as SiteSetting]
+            })
+
+            alert("Survey stats saved successfully!")
+        } catch (error) {
+            console.error("Error saving survey stats:", error)
+            alert("Failed to save survey stats")
+        } finally {
+            setSavingSettings(false)
+        }
+    }
+
+    const surveyStats = useMemo(() => {
+        const setting = siteSettings.find(s => s.key === "survey_stats")
+        return (setting?.value as unknown as SurveyStats) || {
+            averageRating: 3.91,
+            totalResponses: 35,
+            ratings: [
+                { stars: 5, count: 10, percentage: 28.6 },
+                { stars: 4, count: 12, percentage: 34.3 },
+                { stars: 3, count: 13, percentage: 37.1 },
+                { stars: 2, count: 0, percentage: 0 },
+                { stars: 1, count: 0, percentage: 0 },
+            ],
+            dailyUseIntent: { yes: 75, no: 0, maybe: 25 },
+            onScreenAccessComfort: { yes: 87.5, no: 0, maybe: 12.5 },
+            topFeedback: [
+                "Floating features",
+                "Reminders and to do list",
+                "It working as a digital bodyguard",
+                "The on screen chatbot and AI keyboard",
+                "Voice control",
+                "Automation of tasks such as sending messages or checking emails"
+            ]
+        }
+    }, [siteSettings])
+
     const filteredEntries = useMemo(() => {
         return entries
             .filter((e) => filterStatus === "all" || e.status === filterStatus)
@@ -740,6 +798,14 @@ function Dashboard() {
                     >
                         <Zap className="w-4 h-4 inline mr-2" />
                         AI Backend
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("settings")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "settings" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                            }`}
+                    >
+                        <Settings className="w-4 h-4 inline mr-2" />
+                        Settings
                     </button>
                 </div>
 
@@ -1082,6 +1148,153 @@ function Dashboard() {
                 {/* AI Backend Tab */}
                 {activeTab === "ai-backend" && (
                     <AIBackendTester />
+                )}
+
+                {/* Settings Tab */}
+                {activeTab === "settings" && (
+                    <div className="space-y-8">
+                        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                                <Star className="w-5 h-5 text-yellow-500" />
+                                Survey Management
+                            </h2>
+
+                            <form onSubmit={(e) => {
+                                e.preventDefault()
+                                const formData = new FormData(e.currentTarget)
+                                const stats = {
+                                    averageRating: parseFloat(formData.get("averageRating") as string),
+                                    totalResponses: parseInt(formData.get("totalResponses") as string),
+                                    ratings: [
+                                        { stars: 5, count: parseInt(formData.get("stars5") as string), percentage: 0 },
+                                        { stars: 4, count: parseInt(formData.get("stars4") as string), percentage: 0 },
+                                        { stars: 3, count: parseInt(formData.get("stars3") as string), percentage: 0 },
+                                        { stars: 2, count: parseInt(formData.get("stars2") as string), percentage: 0 },
+                                        { stars: 1, count: parseInt(formData.get("stars1") as string), percentage: 0 },
+                                    ],
+                                    dailyUseIntent: {
+                                        yes: parseInt(formData.get("dailyYes") as string),
+                                        maybe: parseInt(formData.get("dailyMaybe") as string),
+                                        no: parseInt(formData.get("dailyNo") as string),
+                                    },
+                                    onScreenAccessComfort: {
+                                        yes: parseFloat(formData.get("comfortYes") as string),
+                                        maybe: parseFloat(formData.get("comfortMaybe") as string),
+                                        no: parseFloat(formData.get("comfortNo") as string),
+                                    },
+                                    topFeedback: (formData.get("topFeedback") as string).split(",").map(s => s.trim()).filter(Boolean)
+                                }
+
+                                // Calculate percentages
+                                const totalRatings = stats.ratings.reduce((acc, r) => acc + r.count, 0)
+                                stats.ratings = stats.ratings.map(r => ({
+                                    ...r,
+                                    percentage: totalRatings > 0 ? parseFloat(((r.count / totalRatings) * 100).toFixed(1)) : 0
+                                }))
+
+                                saveSurveyStats(stats)
+                            }} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm text-slate-400 mb-2">Average Rating</label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            name="averageRating"
+                                            defaultValue={surveyStats.averageRating}
+                                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm text-slate-400 mb-2">Total Responses</label>
+                                        <input
+                                            type="number"
+                                            name="totalResponses"
+                                            defaultValue={surveyStats.totalResponses}
+                                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-semibold text-slate-300">Star Counts</h3>
+                                    <div className="grid grid-cols-5 gap-4">
+                                        {[5, 4, 3, 2, 1].map(stars => (
+                                            <div key={stars}>
+                                                <label className="block text-xs text-slate-500 mb-1">{stars} Stars</label>
+                                                <input
+                                                    type="number"
+                                                    name={`stars${stars}`}
+                                                    defaultValue={surveyStats.ratings.find((r: { stars: number; count: number }) => r.stars === stars)?.count || 0}
+                                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-4">
+                                        <h3 className="text-sm font-semibold text-slate-300">Daily Use Intent (%)</h3>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-xs text-slate-500 mb-1">Yes</label>
+                                                <input type="number" name="dailyYes" defaultValue={surveyStats.dailyUseIntent.yes} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 mb-1">Maybe</label>
+                                                <input type="number" name="dailyMaybe" defaultValue={surveyStats.dailyUseIntent.maybe} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 mb-1">No</label>
+                                                <input type="number" name="dailyNo" defaultValue={surveyStats.dailyUseIntent.no} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <h3 className="text-sm font-semibold text-slate-300">On-screen Access Comfort (%)</h3>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-xs text-slate-500 mb-1">Yes</label>
+                                                <input type="number" step="0.1" name="comfortYes" defaultValue={surveyStats.onScreenAccessComfort.yes} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 mb-1">Maybe</label>
+                                                <input type="number" step="0.1" name="comfortMaybe" defaultValue={surveyStats.onScreenAccessComfort.maybe} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 mb-1">No</label>
+                                                <input type="number" step="0.1" name="comfortNo" defaultValue={surveyStats.onScreenAccessComfort.no} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm text-slate-400 mb-2">Top Feedback Tags (comma-separated)</label>
+                                    <textarea
+                                        name="topFeedback"
+                                        defaultValue={surveyStats.topFeedback.join(", ")}
+                                        rows={3}
+                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 resize-none"
+                                        placeholder="Tag 1, Tag 2, Tag 3..."
+                                    />
+                                </div>
+
+                                <div className="flex justify-end">
+                                    <motion.button
+                                        type="submit"
+                                        disabled={savingSettings}
+                                        className="px-8 py-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium disabled:opacity-50"
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        {savingSettings ? "Saving..." : "Save Changes"}
+                                    </motion.button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 )}
             </div>
 
