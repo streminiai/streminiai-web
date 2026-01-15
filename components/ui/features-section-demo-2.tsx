@@ -19,7 +19,7 @@ export default function FeaturesSectionDemo() {
         {
             title: "AI-Powered Assistant",
             description:
-                "Smart automation and intelligent task handling that learns your workflow patterns.",
+                "Easy access smart AI chatbot while using any app without interrupting your flow.",
             icon: <IconBrain />,
         },
         {

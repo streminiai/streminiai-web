@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Home, Heart, Users, ImageIcon, Info, BookOpen } from "lucide-react"
-import { useState } from "react"
 
 const items = [
   { label: "Home", href: "/", icon: Home },
@@ -13,18 +13,18 @@ const items = [
 ]
 
 export function MobileBottomNav() {
-  const [active, setActive] = useState("/")
+  const pathname = usePathname()
+
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 backdrop-blur-lg md:hidden">
       <div className="mx-auto grid max-w-3xl grid-cols-6 px-2 py-3">
         {items.map((item) => {
           const Icon = item.icon
-          const isActive = active === item.href
+          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
           return (
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setActive(item.href)}
               className={`flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               aria-current={isActive ? "page" : undefined}

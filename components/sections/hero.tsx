@@ -35,8 +35,10 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Stremini guards your digital life while helping you move faster—real‑time threat prevention, voice
-            automation, and an AI keyboard that writes with context.
+            Stremini is an always-on floating AI assistant on your screen.
+            It chats, summarizes, drafts replies, and automates tasks across apps.
+            It protects users with scam detection, intent awareness, and smart alerts.
+            It assists users with help in communication through AI powered keyboard.
           </motion.p>
           <motion.div
             className="mt-8 flex flex-wrap items-center gap-3"
@@ -62,7 +64,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             {[
-              { label: "Launching Soon", sublabel: "Status" },
+              { label: "MVP Building", sublabel: "Status" },
               { label: "24/7 Available", sublabel: "AI Chatbot" },
               { label: "Fully Safe", sublabel: "Security" },
               { label: "24/7 Available", sublabel: "Digital Protection" },

@@ -42,7 +42,7 @@ export default async function BlogPage() {
     const posts = await getBlogPosts()
 
     return (
-        <div className="min-h-screen py-16 md:py-24">
+        <div className="min-h-screen py-16 md:py-24 pb-24 md:pb-24">
             <div className="mx-auto max-w-6xl px-4">
                 {/* Header */}
                 <ScrollReveal>

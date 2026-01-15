@@ -18,27 +18,27 @@ export function AssistantDemo() {
         <CardContent>
           <div role="log" aria-label="Assistant conversation" className="grid gap-3 text-sm">
             <div className="flex items-start gap-3">
-              <div className="h-6 w-6 shrink-0 rounded-md bg-primary" aria-hidden />
+              <img src="/stremio-logo.png" alt="Stremini" className="h-6 w-6 shrink-0 rounded-md object-contain" />
               <div className="rounded-lg border border-border bg-card px-3 py-2">
                 How can I stay safe from phishing across email and messaging?
               </div>
             </div>
 
             <div className="ml-9 rounded-lg border border-border bg-muted px-3 py-2 text-muted-foreground">
-              I’m scanning links and attachments in proactively. Suspicious domains are blocked automatically.
+              I'm scanning links and attachments proactively. Suspicious domains are blocked just by single click.
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="h-6 w-6 shrink-0 rounded-md bg-primary" aria-hidden />
+              <img src="/stremio-logo.png" alt="Stremini" className="h-6 w-6 shrink-0 rounded-md object-contain" />
               <div className="rounded-lg border border-border bg-card px-3 py-2">
                 Draft a polite reply declining a meeting for this Friday.
               </div>
             </div>
 
             <div className="ml-9 rounded-lg border border-border bg-muted px-3 py-2 text-muted-foreground">
-              Here’s a concise draft you can paste now:
+              Here's a concise draft you can paste now:
               <div className="mt-2 rounded-md border border-border bg-background px-3 py-2 text-foreground">
-                Hi Alex—thanks for reaching out. I’m at capacity this Friday. Could we look at next Wednesday instead?
+                Hi Alex—thanks for reaching out. I'm at capacity this Friday. Could we look at next Wednesday instead?
                 Best, Jamie
               </div>
             </div>

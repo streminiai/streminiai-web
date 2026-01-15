@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="mt-16 border-t border-border bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
-          <span className="inline-block h-6 w-6 rounded-md bg-gradient-to-br from-primary to-accent" aria-hidden />
+          <img src="/stremio-logo.png" alt="Stremini" className="h-6 w-6 rounded-md object-contain" />
           <span className="text-sm font-semibold">Stremini</span>
           <span className="text-xs text-muted-foreground">© {new Date().getFullYear()}</span>
         </div>
@@ -38,7 +38,7 @@ export function Footer() {
             </li>
           </ul>
         </nav>
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <Link href="https://www.instagram.com/streminiai/" target="_blank" rel="noopener noreferrer">
             Instagram
           </Link>

@@ -72,7 +72,7 @@ export default function WaitlistPage() {
         >
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Join the Waitlist</span>
+            <span className="text-sm font-medium text-primary">Join the Wishlist</span>
           </div>
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
             Get Early Access to{" "}
@@ -169,9 +169,6 @@ export default function WaitlistPage() {
               )}
             </AnimatePresence>
 
-            <p className="text-center text-sm text-muted-foreground">
-              We respect your privacy. Unsubscribe anytime.
-            </p>
           </form>
         </motion.div>
 

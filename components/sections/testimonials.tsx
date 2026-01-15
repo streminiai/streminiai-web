@@ -1,42 +1,148 @@
-import { Star, ShieldCheck } from "lucide-react"
+"use client"
 
-const reviews = [
-  {
-    name: "Ava Chen",
-    role: "Security Analyst",
-    text: "The scam detection saved our team multiple times. Stremini is a must-have.",
-  },
-  { name: "Liam Patel", role: "Founder", text: "Floating UI that pops in when I need it—magic for focus and speed." },
-  { name: "Noah Smith", role: "Engineer", text: "Voice automation + AI keyboard = fewer clicks, faster delivery." },
-  {
-    name: "Emma Garcia",
-    role: "Product Manager",
-    text: "Setup was easy and the protection runs 24/7 in the background.",
-  },
+import { Star, Users, ThumbsUp, MessageSquare } from "lucide-react"
+import { motion } from "framer-motion"
+
+// Real survey data from user feedback
+const stats = {
+  averageRating: 4.13,
+  totalResponses: 8,
+  ratings: [
+    { stars: 5, count: 2, percentage: 25 },
+    { stars: 4, count: 5, percentage: 62.5 },
+    { stars: 3, count: 1, percentage: 12.5 },
+    { stars: 2, count: 0, percentage: 0 },
+    { stars: 1, count: 0, percentage: 0 },
+  ],
+  dailyUseIntent: { yes: 75, no: 0, maybe: 25 },
+  onScreenAccessComfort: { yes: 87.5, no: 0, maybe: 12.5 },
+}
+
+const topFeedback = [
+  "Floating features",
+  "Reminders and to do list",
+  "It working as a digital bodyguard",
+  "The on screen chatbot and AI keyboard",
+  "Voice control",
+  "Automation of tasks such as sending messages or checking emails",
 ]
 
 export function Testimonials() {
   return (
     <div className="mx-auto max-w-6xl px-4">
-      <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">What users say</h2>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {reviews.map((r) => (
-          <div key={r.name} className="rounded-lg border border-border bg-card p-5">
-            <div className="mb-2 flex items-center gap-1 text-yellow-500" aria-label="5 stars">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={16} fill="currentColor" />
-              ))}
+      <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">User Feedback</h2>
+      <p className="mt-2 text-center text-muted-foreground">Based on real survey responses from early testers</p>
+
+      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Average Rating Card */}
+        <motion.div
+          className="rounded-xl border border-border bg-card p-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="w-5 h-5 text-yellow-500" fill="currentColor" />
+            <span className="font-semibold">Average Rating</span>
+          </div>
+          <div className="text-4xl font-bold text-primary mb-2">{stats.averageRating.toFixed(2)}</div>
+          <p className="text-sm text-muted-foreground">out of 5 stars ({stats.totalResponses} responses)</p>
+
+          {/* Rating bars */}
+          <div className="mt-4 space-y-2">
+            {stats.ratings.map((rating) => (
+              <div key={rating.stars} className="flex items-center gap-2 text-sm">
+                <span className="w-3">{rating.stars}</span>
+                <Star className="w-3 h-3 text-yellow-500" fill="currentColor" />
+                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-yellow-500 rounded-full"
+                    style={{ width: `${rating.percentage}%` }}
+                  />
+                </div>
+                <span className="w-8 text-xs text-muted-foreground">{rating.percentage}%</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Daily Use Intent */}
+        <motion.div
+          className="rounded-xl border border-border bg-card p-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Users className="w-5 h-5 text-primary" />
+            <span className="font-semibold">Would use daily?</span>
+          </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="text-4xl font-bold text-green-500">{stats.dailyUseIntent.yes}%</div>
+            <span className="text-muted-foreground">said Yes</span>
+          </div>
+          <div className="flex gap-2">
+            <div className="flex-1 rounded-lg bg-green-500/20 p-3 text-center">
+              <div className="text-lg font-semibold text-green-500">{stats.dailyUseIntent.yes}%</div>
+              <div className="text-xs text-muted-foreground">Yes</div>
             </div>
-            <p className="text-pretty text-sm leading-relaxed text-foreground">{r.text}</p>
-            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <ShieldCheck size={16} className="text-primary" />
-              <span className="font-medium text-foreground">{r.name}</span>
-              <span>• {r.role}</span>
-              <span>• Verified</span>
+            <div className="flex-1 rounded-lg bg-yellow-500/20 p-3 text-center">
+              <div className="text-lg font-semibold text-yellow-500">{stats.dailyUseIntent.maybe}%</div>
+              <div className="text-xs text-muted-foreground">Maybe</div>
+            </div>
+            <div className="flex-1 rounded-lg bg-red-500/20 p-3 text-center">
+              <div className="text-lg font-semibold text-red-500">{stats.dailyUseIntent.no}%</div>
+              <div className="text-xs text-muted-foreground">No</div>
             </div>
           </div>
-        ))}
+        </motion.div>
+
+        {/* On-screen Access Comfort */}
+        <motion.div
+          className="rounded-xl border border-border bg-card p-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <ThumbsUp className="w-5 h-5 text-primary" />
+            <span className="font-semibold">Comfortable with on-screen access?</span>
+          </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="text-4xl font-bold text-green-500">{stats.onScreenAccessComfort.yes}%</div>
+            <span className="text-muted-foreground">are comfortable</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Users feel safe giving on-screen access when everything stays on-device and only works on their command.
+          </p>
+        </motion.div>
       </div>
+
+      {/* Top Features Users Love */}
+      <motion.div
+        className="mt-8 rounded-xl border border-border bg-card p-6"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3 }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <MessageSquare className="w-5 h-5 text-primary" />
+          <span className="font-semibold">Top Features Users Want</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {topFeedback.map((feature, idx) => (
+            <span
+              key={idx}
+              className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium"
+            >
+              {feature}
+            </span>
+          ))}
+        </div>
+      </motion.div>
     </div>
   )
 }

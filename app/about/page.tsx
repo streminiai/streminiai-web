@@ -45,7 +45,7 @@ export default function AboutPage() {
         <div className="h-2 w-16 rounded-full bg-gradient-to-r from-primary to-accent" aria-hidden />
         <h1 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">About Stremini</h1>
         <p className="text-pretty text-muted-foreground">
-          We’re a global team of 25 innovators, developers, and researchers united by a single mission—to make the
+          We’re a global team of 20 innovators, developers, and researchers united by a single mission—to make the
           digital world safer and smarter. We’re building an AI-powered floating assistant designed to protect your
           device from online scams and digital threats while enhancing your productivity and convenience.
         </p>
