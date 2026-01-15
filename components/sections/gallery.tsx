@@ -8,7 +8,6 @@ const galleryItems = [
   { title: "Scam Detection Demo", src: "/gallery-1.jpg" },
   { title: "Chatbot", src: "/gallery-2.jpg" },
   { title: "AI Keyboard", src: "/gallery-3.jpg" },
-  { title: "Smart Automation", src: "/gallery-4.jpg" },
 ]
 
 export function Gallery() {
