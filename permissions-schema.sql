@@ -53,23 +53,27 @@ $$ language plpgsql security definer;
 
 -- Blog Posts
 drop policy if exists "Allow authenticated manage" on public.blog_posts;
+drop policy if exists "Allow superadmin and blog_editor manage" on public.blog_posts;
 create policy "Allow superadmin and blog_editor manage" on public.blog_posts
   for all
   using (public.is_superadmin() or public.has_role('blog_editor'));
 
 -- Team Members
 drop policy if exists "Allow authenticated manage" on public.team_members;
+drop policy if exists "Allow superadmin and team_editor manage" on public.team_members;
 create policy "Allow superadmin and team_editor manage" on public.team_members
   for all
   using (public.is_superadmin() or public.has_role('team_editor'));
 
 -- Site Settings
 drop policy if exists "Allow authenticated manage" on public.site_settings;
+drop policy if exists "Allow superadmin manage settings" on public.site_settings;
 create policy "Allow superadmin manage settings" on public.site_settings
   for all
   using (public.is_superadmin());
 
 -- Waitlist
+drop policy if exists "Allow authenticated users to manage waitlist" on public.waitlist;
 drop policy if exists "Allow superadmin and waitlist_viewer manage" on public.waitlist;
 create policy "Allow superadmin and waitlist_viewer manage" on public.waitlist
   for all
