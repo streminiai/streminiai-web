@@ -5,12 +5,12 @@ import { motion } from "framer-motion"
 
 // Real survey data from user feedback
 const stats = {
-  averageRating: 4.13,
-  totalResponses: 8,
+  averageRating: 3.91,
+  totalResponses: 35,
   ratings: [
-    { stars: 5, count: 2, percentage: 25 },
-    { stars: 4, count: 5, percentage: 62.5 },
-    { stars: 3, count: 1, percentage: 12.5 },
+    { stars: 5, count: 10, percentage: 28.6 },
+    { stars: 4, count: 12, percentage: 34.3 },
+    { stars: 3, count: 13, percentage: 37.1 },
     { stars: 2, count: 0, percentage: 0 },
     { stars: 1, count: 0, percentage: 0 },
   ],

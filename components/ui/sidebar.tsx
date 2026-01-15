@@ -120,10 +120,11 @@ export const MobileSidebar = ({
             >
                 <div className="flex justify-between items-center z-20 w-full">
                     <span className="text-sm font-semibold tracking-wide">Stremini</span>
-                    <IconMenu2
+                    {/* Menu button hidden on mobile as we use MobileBottomNav */}
+                    {/* <IconMenu2
                         className="text-foreground cursor-pointer"
                         onClick={() => setOpen(!open)}
-                    />
+                    /> */}
                 </div>
                 <AnimatePresence>
                     {open && (
