@@ -68,7 +68,24 @@ create policy "Allow superadmin manage settings" on public.site_settings
   using (public.is_superadmin());
 
 -- Waitlist
-drop policy if exists "Allow authenticated users to manage waitlist" on public.waitlist;
+drop policy if exists "Allow superadmin and waitlist_viewer manage" on public.waitlist;
 create policy "Allow superadmin and waitlist_viewer manage" on public.waitlist
   for all
   using (public.is_superadmin() or public.has_role('waitlist_viewer'));
+
+-- View to list users and their roles (accessible only to superadmins)
+create or replace view public.user_roles_view as
+select 
+    au.id as user_id,
+    au.email,
+    ur.role,
+    ur.created_at,
+    ur.updated_at
+from auth.users au
+left join public.user_roles ur on au.id = ur.user_id;
+
+-- Grant access to the view
+grant select on public.user_roles_view to authenticated;
+
+-- Note: To manually assign superadmin from SQL:
+-- INSERT INTO public.user_roles (user_id, role) VALUES ('YOUR_USER_ID', 'superadmin') ON CONFLICT (user_id) DO UPDATE SET role = 'superadmin';

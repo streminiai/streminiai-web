@@ -83,6 +83,14 @@ export const categoryLabels: Record<TeamMember['category'], string> = {
 
 export type UserRole = 'superadmin' | 'blog_editor' | 'team_editor' | 'waitlist_viewer'
 
+export type UserRoleView = {
+    user_id: string
+    email: string
+    role: UserRole | null
+    created_at: string | null
+    updated_at: string | null
+}
+
 export async function getUserRole(userId: string): Promise<UserRole | null> {
     try {
         const { data, error } = await supabase
@@ -96,5 +104,34 @@ export async function getUserRole(userId: string): Promise<UserRole | null> {
     } catch (error) {
         console.error('Error fetching user role:', error)
         return null
+    }
+}
+
+export async function getAllUserRoles(): Promise<UserRoleView[]> {
+    try {
+        const { data, error } = await supabase
+            .from('user_roles_view')
+            .select('*')
+            .order('email', { ascending: true })
+
+        if (error) throw error
+        return data as UserRoleView[]
+    } catch (error) {
+        console.error('Error fetching all user roles:', error)
+        return []
+    }
+}
+
+export async function updateUserRole(userId: string, role: UserRole): Promise<boolean> {
+    try {
+        const { error } = await supabase
+            .from('user_roles')
+            .upsert({ user_id: userId, role, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
+
+        if (error) throw error
+        return true
+    } catch (error) {
+        console.error('Error updating user role:', error)
+        return false
     }
 }

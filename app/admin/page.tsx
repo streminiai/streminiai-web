@@ -29,12 +29,13 @@ import {
     Settings,
     Star,
     Upload,
+    Shield,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, UserRoleView } from "@/lib/supabase"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
 
-type Tab = "waitlist" | "team" | "blog" | "ai-backend" | "settings"
+type Tab = "waitlist" | "team" | "blog" | "ai-backend" | "settings" | "permissions"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
 
 // Login component
@@ -653,6 +654,8 @@ function Dashboard() {
     const [siteSettings, setSiteSettings] = useState<SiteSetting[]>([])
     const [savingSettings, setSavingSettings] = useState(false)
     const [userRole, setUserRole] = useState<UserRole | null>(null)
+    const [allUserRoles, setAllUserRoles] = useState<UserRoleView[]>([])
+    const [updatingRole, setUpdatingRole] = useState<string | null>(null)
 
     const fetchData = useCallback(async () => {
         setLoading(true)
@@ -666,6 +669,12 @@ function Dashboard() {
                 if (role === 'blog_editor') setActiveTab('blog')
                 else if (role === 'team_editor') setActiveTab('team')
                 else if (role === 'waitlist_viewer') setActiveTab('waitlist')
+
+                // Fetch all roles if superadmin
+                if (role === 'superadmin') {
+                    const roles = await getAllUserRoles()
+                    setAllUserRoles(roles)
+                }
             }
 
             const [waitlistRes, teamRes, blogRes, settingsRes] = await Promise.all([
@@ -808,6 +817,18 @@ function Dashboard() {
         }
     }
 
+    const handleRoleUpdate = async (userId: string, role: UserRole) => {
+        setUpdatingRole(userId)
+        const success = await updateUserRole(userId, role)
+        if (success) {
+            setAllUserRoles(prev => prev.map(u => u.user_id === userId ? { ...u, role } : u))
+            alert("Role updated successfully!")
+        } else {
+            alert("Failed to update role")
+        }
+        setUpdatingRole(null)
+    }
+
     const surveyStats = useMemo(() => {
         const setting = siteSettings.find(s => s.key === "survey_stats")
         return (setting?.value as unknown as SurveyStats) || {
@@ -931,6 +952,14 @@ function Dashboard() {
                             >
                                 <Settings className="w-4 h-4 inline mr-2" />
                                 Settings
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("permissions")}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "permissions" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                    }`}
+                            >
+                                <Shield className="w-4 h-4 inline mr-2" />
+                                Permissions
                             </button>
                         </>
                     )}
@@ -1293,6 +1322,74 @@ function Dashboard() {
                     <AIBackendTester />
                 )}
 
+                {/* Permissions Tab */}
+                {activeTab === "permissions" && userRole === 'superadmin' && (
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                <Shield className="w-5 h-5 text-purple-500" />
+                                User Permissions Management
+                            </h2>
+                            <button
+                                onClick={fetchData}
+                                className="p-2 rounded-lg hover:bg-slate-800 text-slate-400"
+                                title="Refresh"
+                            >
+                                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                            </button>
+                        </div>
+
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-slate-800">
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">User Email</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Current Role</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {allUserRoles.map((user) => (
+                                            <tr key={user.user_id} className="border-b border-slate-800/50 hover:bg-slate-800/50">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <Mail className="w-4 h-4 text-slate-400" />
+                                                        <span className="font-medium">{user.email}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === 'superadmin' ? 'bg-purple-500/20 text-purple-400' :
+                                                        user.role === 'blog_editor' ? 'bg-blue-500/20 text-blue-400' :
+                                                            user.role === 'team_editor' ? 'bg-green-500/20 text-green-400' :
+                                                                user.role === 'waitlist_viewer' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                                    'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                        {user.role || 'No Role'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <select
+                                                        value={user.role || ''}
+                                                        disabled={updatingRole === user.user_id}
+                                                        onChange={(e) => handleRoleUpdate(user.user_id, e.target.value as UserRole)}
+                                                        className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:border-purple-500 disabled:opacity-50"
+                                                    >
+                                                        <option value="" disabled>Select Role</option>
+                                                        <option value="superadmin">Superadmin</option>
+                                                        <option value="blog_editor">Blog Editor</option>
+                                                        <option value="team_editor">Team Editor</option>
+                                                        <option value="waitlist_viewer">Waitlist Viewer</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {/* Settings Tab */}
                 {activeTab === "settings" && (
                     <div className="space-y-8">
