@@ -43,7 +43,7 @@ export function Waitlist() {
           {loading ? "Joining..." : "Join Waitlist"}
         </Button>
       </form>
-      <p className="mt-2 text-center text-xs text-muted-foreground">We respect your privacy. Unsubscribe anytime.</p>
+      <p className="mt-2 text-center text-xs text-muted-foreground">We respect your privacy.</p>
       {status === "ok" && <p className="mt-2 text-center text-sm text-green-600">Thanks! You’re on the list.</p>}
       {status === "err" && (
         <p className="mt-2 text-center text-sm text-red-600">Something went wrong. Please try again.</p>

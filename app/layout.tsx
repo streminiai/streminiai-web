@@ -126,7 +126,7 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Stremini AI",
               url: "https://stremini.ai",
-              sameAs: ["https://twitter.com/stremini", "https://instagram.com/stremini", "https://t.me/stremini"],
+              sameAs: ["https://twitter.com/stremini", "https://www.instagram.com/stremini.site?igsh=MXg5dzZ3cW8zNDhlcg==", "https://t.me/stremini"],
             }),
           }}
         />

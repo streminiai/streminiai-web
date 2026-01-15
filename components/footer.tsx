@@ -40,7 +40,7 @@ export function Footer() {
           </ul>
         </nav>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <Link href="https://www.instagram.com/streminiai/" target="_blank" rel="noopener noreferrer">
+          <Link href="https://www.instagram.com/stremini.site?igsh=MXg5dzZ3cW8zNDhlcg==" target="_blank" rel="noopener noreferrer">
             Instagram
           </Link>
           <Link href="https://twitter.com/stremini" target="_blank" rel="noopener noreferrer">
