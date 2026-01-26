@@ -1128,7 +1128,7 @@ function Dashboard() {
                     <>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-semibold">Team Members</h2>
-                            {(userRole === 'superadmin' || userRole === 'team_editor') && (
+                            {(userRoles?.includes('superadmin') || userRoles?.includes('team_editor')) && (
                                 <button
                                     onClick={() => {
                                         setSelectedMember(null)
@@ -1228,7 +1228,7 @@ function Dashboard() {
                                     </select>
                                 </div>
 
-                                {(userRole === 'superadmin' || userRole === 'blog_editor') && (
+                                {(userRoles?.includes('superadmin') || userRoles?.includes('blog_editor')) && (
                                     <button
                                         onClick={() => {
                                             setSelectedPost(null)
