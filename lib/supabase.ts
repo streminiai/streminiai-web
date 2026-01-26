@@ -86,18 +86,18 @@ export type UserRole = 'superadmin' | 'blog_editor' | 'team_editor' | 'waitlist_
 export type UserRoleView = {
     user_id: string
     email: string
-    role: UserRole | null
+    roles: UserRole[] | null
     created_at: string | null
     updated_at: string | null
 }
 
-export async function getUserRole(): Promise<UserRole | null> {
+export async function getUserRole(): Promise<UserRole[] | null> {
     try {
         const { data, error } = await supabase
             .rpc('get_my_role')
 
         if (error) throw error
-        return data as UserRole
+        return data as UserRole[]
     } catch (error) {
         console.error('Error fetching user role:', error)
         return null
@@ -117,16 +117,32 @@ export async function getAllUserRoles(): Promise<UserRoleView[]> {
     }
 }
 
-export async function updateUserRole(userId: string, role: UserRole): Promise<boolean> {
+export async function updateUserRole(userId: string, roles: UserRole[]): Promise<boolean> {
     try {
         const { error } = await supabase
             .from('user_roles')
-            .upsert({ user_id: userId, role, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
+            .upsert({ user_id: userId, roles, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
 
         if (error) throw error
         return true
     } catch (error) {
         console.error('Error updating user role:', error)
         return false
+    }
+}
+
+export async function addUserByEmail(email: string, roles: UserRole[]): Promise<boolean> {
+    try {
+        const { data, error } = await supabase
+            .rpc('add_user_role_by_email', {
+                target_email: email,
+                new_roles: roles
+            })
+
+        if (error) throw error
+        return data as boolean
+    } catch (error) {
+        console.error('Error adding user by email:', error)
+        throw error
     }
 }

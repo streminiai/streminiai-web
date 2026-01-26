@@ -31,7 +31,7 @@ import {
     Upload,
     Shield,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, UserRoleView } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, addUserByEmail, UserRoleView } from "@/lib/supabase"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
 
@@ -653,27 +653,31 @@ function Dashboard() {
     const [showPostModal, setShowPostModal] = useState(false)
     const [siteSettings, setSiteSettings] = useState<SiteSetting[]>([])
     const [savingSettings, setSavingSettings] = useState(false)
-    const [userRole, setUserRole] = useState<UserRole | null>(null)
+    const [userRoles, setUserRoles] = useState<UserRole[] | null>(null)
     const [allUserRoles, setAllUserRoles] = useState<UserRoleView[]>([])
     const [updatingRole, setUpdatingRole] = useState<string | null>(null)
+    const [showAddUserModal, setShowAddUserModal] = useState(false)
+    const [newUserEmail, setNewUserEmail] = useState("")
+    const [newUserRoles, setNewUserRoles] = useState<UserRole[]>([])
 
     const fetchData = useCallback(async () => {
         setLoading(true)
         try {
             const { data: { session } } = await supabase.auth.getSession()
             if (session?.user) {
-                const role = await getUserRole()
-                setUserRole(role)
+                const roles = await getUserRole()
+                setUserRoles(roles)
 
                 // Set initial tab based on role
-                if (role === 'blog_editor') setActiveTab('blog')
-                else if (role === 'team_editor') setActiveTab('team')
-                else if (role === 'waitlist_viewer') setActiveTab('waitlist')
+                if (roles?.includes('superadmin')) setActiveTab('waitlist')
+                else if (roles?.includes('blog_editor')) setActiveTab('blog')
+                else if (roles?.includes('team_editor')) setActiveTab('team')
+                else if (roles?.includes('waitlist_viewer')) setActiveTab('waitlist')
 
                 // Fetch all roles if superadmin
-                if (role === 'superadmin') {
-                    const roles = await getAllUserRoles()
-                    setAllUserRoles(roles)
+                if (roles?.includes('superadmin')) {
+                    const allRoles = await getAllUserRoles()
+                    setAllUserRoles(allRoles)
                 }
             }
 
@@ -817,16 +821,44 @@ function Dashboard() {
         }
     }
 
-    const handleRoleUpdate = async (userId: string, role: UserRole) => {
+    const handleRoleToggle = async (userId: string, role: UserRole, currentRoles: UserRole[]) => {
         setUpdatingRole(userId)
-        const success = await updateUserRole(userId, role)
+        const newRoles = currentRoles.includes(role)
+            ? currentRoles.filter(r => r !== role)
+            : [...currentRoles, role]
+
+        const success = await updateUserRole(userId, newRoles)
         if (success) {
-            setAllUserRoles(prev => prev.map(u => u.user_id === userId ? { ...u, role } : u))
-            alert("Role updated successfully!")
+            setAllUserRoles(prev => prev.map(u => u.user_id === userId ? { ...u, roles: newRoles } : u))
         } else {
-            alert("Failed to update role")
+            alert("Failed to update roles")
         }
         setUpdatingRole(null)
+    }
+
+    const handleAddUser = async () => {
+        if (!newUserEmail || newUserRoles.length === 0) {
+            alert("Please provide an email and at least one role")
+            return
+        }
+
+        try {
+            setLoading(true)
+            const success = await addUserByEmail(newUserEmail, newUserRoles)
+            if (success) {
+                alert("User added successfully!")
+                setShowAddUserModal(false)
+                setNewUserEmail("")
+                setNewUserRoles([])
+                fetchData()
+            }
+        } catch (error: unknown) {
+            console.error("Error adding user:", error)
+            const message = error instanceof Error ? error.message : "Failed to add user. Ensure the user exists in Supabase Auth."
+            alert(message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const surveyStats = useMemo(() => {
@@ -905,7 +937,7 @@ function Dashboard() {
 
                 {/* Tabs */}
                 <div className="flex gap-2 mb-6">
-                    {(userRole === 'superadmin' || userRole === 'waitlist_viewer') && (
+                    {(userRoles?.includes('superadmin') || userRoles?.includes('waitlist_viewer')) && (
                         <button
                             onClick={() => setActiveTab("waitlist")}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "waitlist" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
@@ -915,7 +947,7 @@ function Dashboard() {
                             Waitlist
                         </button>
                     )}
-                    {(userRole === 'superadmin' || userRole === 'team_editor') && (
+                    {(userRoles?.includes('superadmin') || userRoles?.includes('team_editor')) && (
                         <button
                             onClick={() => setActiveTab("team")}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "team" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
@@ -925,7 +957,7 @@ function Dashboard() {
                             Team
                         </button>
                     )}
-                    {(userRole === 'superadmin' || userRole === 'blog_editor') && (
+                    {(userRoles?.includes('superadmin') || userRoles?.includes('blog_editor')) && (
                         <button
                             onClick={() => setActiveTab("blog")}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "blog" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
@@ -935,7 +967,7 @@ function Dashboard() {
                             Blog
                         </button>
                     )}
-                    {userRole === 'superadmin' && (
+                    {userRoles?.includes('superadmin') && (
                         <>
                             <button
                                 onClick={() => setActiveTab("ai-backend")}
@@ -963,10 +995,10 @@ function Dashboard() {
                             </button>
                         </>
                     )}
-                    {!loading && userRole === null && (
+                    {!loading && (userRoles === null || userRoles?.length === 0) && (
                         <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20 text-sm">
                             <Shield className="w-4 h-4" />
-                            No role assigned. Please contact a superadmin.
+                            No role assigned to {userRoles === null ? "this user" : "this account"}. Please contact a superadmin.
                         </div>
                     )}
                 </div>
@@ -1062,7 +1094,7 @@ function Dashboard() {
                                                     <td className="px-6 py-4 text-slate-400 text-sm">{new Date(entry.created_at).toLocaleDateString()}</td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-1">
-                                                            {(userRole === 'superadmin' || userRole === 'waitlist_viewer') && (
+                                                            {(userRoles?.includes('superadmin') || userRoles?.includes('waitlist_viewer')) && (
                                                                 <>
                                                                     {entry.status !== "approved" && (
                                                                         <button onClick={() => updateWaitlistStatus(entry.id, "approved")} className="p-2 rounded-lg hover:bg-slate-700 text-green-400" title="Approve">
@@ -1137,7 +1169,7 @@ function Dashboard() {
                                                 </div>
                                             </div>
                                             <div className="flex gap-1">
-                                                {(userRole === 'superadmin' || userRole === 'team_editor') && (
+                                                {userRoles?.includes('superadmin') && (
                                                     <>
                                                         <button
                                                             onClick={() => {
@@ -1261,7 +1293,7 @@ function Dashboard() {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-1">
-                                                            {(userRole === 'superadmin' || userRole === 'blog_editor') && (
+                                                            {(userRoles?.includes('superadmin') || userRoles?.includes('blog_editor')) && (
                                                                 <>
                                                                     <button
                                                                         onClick={async () => {
@@ -1329,64 +1361,88 @@ function Dashboard() {
                 )}
 
                 {/* Permissions Tab */}
-                {activeTab === "permissions" && userRole === 'superadmin' && (
+                {activeTab === "permissions" && userRoles?.includes('superadmin') && (
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                <Shield className="w-5 h-5 text-purple-500" />
-                                User Permissions Management
-                            </h2>
-                            <button
-                                onClick={fetchData}
-                                className="p-2 rounded-lg hover:bg-slate-800 text-slate-400"
-                                title="Refresh"
-                            >
-                                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                            </button>
+                            <div>
+                                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                    <Shield className="w-5 h-5 text-purple-500" />
+                                    User Permissions Management
+                                </h2>
+                                <p className="text-slate-400 text-sm mt-1">Manage user roles and access levels</p>
+                            </div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowAddUserModal(true)}
+                                    className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Add User
+                                </button>
+                                <button
+                                    onClick={fetchData}
+                                    className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 border border-slate-800"
+                                    title="Refresh"
+                                >
+                                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                                </button>
+                            </div>
                         </div>
 
                         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="border-b border-slate-800">
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">User Email</th>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Current Role</th>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase">Actions</th>
+                                        <tr className="border-b border-slate-800 bg-slate-800/50">
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">User Email</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Assigned Roles</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {allUserRoles.map((user) => (
-                                            <tr key={user.user_id} className="border-b border-slate-800/50 hover:bg-slate-800/50">
+                                            <tr key={user.user_id} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-2">
-                                                        <Mail className="w-4 h-4 text-slate-400" />
-                                                        <span className="font-medium">{user.email}</span>
+                                                        <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
+                                                            <Mail className="w-4 h-4 text-purple-400" />
+                                                        </div>
+                                                        <span className="font-medium text-slate-200">{user.email}</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === 'superadmin' ? 'bg-purple-500/20 text-purple-400' :
-                                                        user.role === 'blog_editor' ? 'bg-blue-500/20 text-blue-400' :
-                                                            user.role === 'team_editor' ? 'bg-green-500/20 text-green-400' :
-                                                                user.role === 'waitlist_viewer' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                                    'bg-slate-500/20 text-slate-400'
-                                                        }`}>
-                                                        {user.role || 'No Role'}
-                                                    </span>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {user.roles && user.roles.length > 0 ? (
+                                                            user.roles.map(role => (
+                                                                <span key={role} className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${role === 'superadmin' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                                                                    role === 'blog_editor' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                                                                        role === 'team_editor' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                                                            'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                                                                    }`}>
+                                                                    {role.replace('_', ' ')}
+                                                                </span>
+                                                            ))
+                                                        ) : (
+                                                            <span className="text-slate-500 text-xs italic">No roles assigned</span>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <select
-                                                        value={user.role || ''}
-                                                        disabled={updatingRole === user.user_id}
-                                                        onChange={(e) => handleRoleUpdate(user.user_id, e.target.value as UserRole)}
-                                                        className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:border-purple-500 disabled:opacity-50"
-                                                    >
-                                                        <option value="" disabled>Select Role</option>
-                                                        <option value="superadmin">Superadmin</option>
-                                                        <option value="blog_editor">Blog Editor</option>
-                                                        <option value="team_editor">Team Editor</option>
-                                                        <option value="waitlist_viewer">Waitlist Viewer</option>
-                                                    </select>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {(['superadmin', 'blog_editor', 'team_editor', 'waitlist_viewer'] as UserRole[]).map(role => (
+                                                            <button
+                                                                key={role}
+                                                                disabled={updatingRole === user.user_id}
+                                                                onClick={() => handleRoleToggle(user.user_id, role, user.roles || [])}
+                                                                className={`px-2 py-1 rounded text-[10px] font-bold uppercase transition-all ${user.roles?.includes(role)
+                                                                    ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/20'
+                                                                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                                                    } disabled:opacity-50`}
+                                                            >
+                                                                {role.split('_')[0]}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -1569,6 +1625,94 @@ function Dashboard() {
                         }}
                         onSave={saveBlogPost}
                     />
+                )}
+            </AnimatePresence>
+
+            {/* Add User Modal */}
+            <AnimatePresence>
+                {showAddUserModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
+                                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                    <UserPlus className="w-5 h-5 text-purple-500" />
+                                    Add New User
+                                </h3>
+                                <button
+                                    onClick={() => setShowAddUserModal(false)}
+                                    className="p-2 hover:bg-slate-700 rounded-lg text-slate-400 transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-2">User Email</label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                        <input
+                                            type="email"
+                                            value={newUserEmail}
+                                            onChange={(e) => setNewUserEmail(e.target.value)}
+                                            placeholder="user@example.com"
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-purple-500 transition-colors"
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-slate-500 mt-2">The user must already have an account in Supabase Auth.</p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-3">Assign Roles</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {(['superadmin', 'blog_editor', 'team_editor', 'waitlist_viewer'] as UserRole[]).map(role => (
+                                            <button
+                                                key={role}
+                                                onClick={() => {
+                                                    setNewUserRoles(prev =>
+                                                        prev.includes(role)
+                                                            ? prev.filter(r => r !== role)
+                                                            : [...prev, role]
+                                                    )
+                                                }}
+                                                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-semibold transition-all ${newUserRoles.includes(role)
+                                                    ? 'bg-purple-500/20 border-purple-500 text-purple-400'
+                                                    : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                                                    }`}
+                                            >
+                                                <div className={`w-4 h-4 rounded flex items-center justify-center border ${newUserRoles.includes(role) ? 'bg-purple-500 border-purple-500' : 'border-slate-700'}`}>
+                                                    {newUserRoles.includes(role) && <Check className="w-3 h-3 text-white" />}
+                                                </div>
+                                                {role.replace('_', ' ')}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-slate-800/30 border-t border-slate-800 flex gap-3">
+                                <button
+                                    onClick={() => setShowAddUserModal(false)}
+                                    className="flex-1 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleAddUser}
+                                    disabled={loading || !newUserEmail || newUserRoles.length === 0}
+                                    className="flex-1 px-4 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                                    Add User
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
         </div>
