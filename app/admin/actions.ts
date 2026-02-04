@@ -33,17 +33,18 @@ export async function inviteUser(email: string, roles: UserRole[]) {
             }
         )
 
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-        if (!session) {
-            throw new Error('Unauthorized: No session found')
+        if (authError || !user) {
+            console.error('[inviteUser] Auth error or no user:', authError)
+            throw new Error('Unauthorized: No active session found. Please refresh the page and try again.')
         }
 
         // Check roles of the requester using the admin client for reliability
         const { data: userRoleData, error: rolesError } = await adminClient
             .from('user_roles')
             .select('roles')
-            .eq('user_id', session.user.id)
+            .eq('user_id', user.id)
             .single()
 
         if (rolesError || !userRoleData?.roles?.includes('superadmin')) {
