@@ -32,6 +32,7 @@ import {
     Shield,
 } from "lucide-react"
 import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, addUserByEmail, UserRoleView } from "@/lib/supabase"
+import { inviteUser } from "./actions"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
 
@@ -844,13 +845,16 @@ function Dashboard() {
 
         try {
             setLoading(true)
-            const success = await addUserByEmail(newUserEmail, newUserRoles)
-            if (success) {
-                alert("User added successfully!")
+            const result = await inviteUser(newUserEmail, newUserRoles)
+
+            if (result.success) {
+                alert(result.message || "User added successfully!")
                 setShowAddUserModal(false)
                 setNewUserEmail("")
                 setNewUserRoles([])
                 fetchData()
+            } else {
+                throw new Error(result.error || "Failed to add user")
             }
         } catch (error: unknown) {
             console.error("Error adding user:", error)
