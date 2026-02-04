@@ -31,7 +31,7 @@ import {
     Upload,
     Shield,
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, addUserByEmail, UserRoleView } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, UserRoleView } from "@/lib/supabase"
 import { inviteUser } from "./actions"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
