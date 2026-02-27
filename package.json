@@ -12,6 +12,7 @@
     "@emailjs/browser": "^4.4.1",
     "@emailjs/nodejs": "^5.0.2",
     "@geist-ui/react": "^2.2.5",
+    "@google/genai": "^1.43.0",
     "@hookform/resolvers": "^3.10.0",
     "@next/third-parties": "15.5.7",
     "@radix-ui/react-accordion": "1.2.2",

@@ -1,4 +1,4 @@
-import { StreminiDemoInteractive } from "@/components/stremini-demo-interactive"
+import StreminiAiDemo from "@/components/stremini-ai-demo"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function DemoPage() {
-    return <StreminiDemoInteractive />
+    return <StreminiAiDemo />
 }
