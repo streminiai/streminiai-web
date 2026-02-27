@@ -51,13 +51,27 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
         setLoading(true)
         setError("")
 
+        // Check if the URL is the placeholder
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        if (!supabaseUrl || supabaseUrl.includes('placeholder.supabase.co')) {
+            setError("Configuration Error: NEXT_PUBLIC_SUPABASE_URL is missing or invalid. Please check your environment variables.")
+            setLoading(false)
+            return
+        }
+
         try {
             const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             })
 
-            if (error) throw error
+            if (error) {
+                // If it's a fetch error, it might be an adblocker or completely invalid URL
+                if (error.message.includes("Failed to fetch")) {
+                    throw new Error("Network Error: Could not connect to Supabase. This may be caused by an invalid Supabase URL or an aggressive adblocker.")
+                }
+                throw error
+            }
             onLogin()
         } catch (err) {
             setError(err instanceof Error ? err.message : "Login failed")

@@ -10,7 +10,8 @@ export function CursorOrb() {
     const mouseX = useMotionValue(0)
     const mouseY = useMotionValue(0)
 
-    const springConfig = { damping: 25, stiffness: 150 }
+    // Increase stiffness and damping to eliminate obvious spring latency
+    const springConfig = { damping: 100, stiffness: 2000, mass: 0.1 }
     const x = useSpring(mouseX, springConfig)
     const y = useSpring(mouseY, springConfig)
 
