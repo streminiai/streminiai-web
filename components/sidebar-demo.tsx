@@ -74,6 +74,11 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
                 <IconDeviceImac className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
             ),
         },
+        {
+  label: "Research",
+  href: "/research",
+  icon: <IconBook className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />,
+},
     ];
     const [open, setOpen] = useState(false);
     return (
