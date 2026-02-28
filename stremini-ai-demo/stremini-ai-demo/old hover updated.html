@@ -1,0 +1,1096 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stremini UI with Chat & AI Manager</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { 
+      box-sizing: border-box;
+      /* Remove all touch highlights and selections */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      outline: none;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0a0a0a;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      /* Extra touch highlight removal */
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-focus-ring-color: rgba(0,0,0,0);
+      outline: none;
+    }
+
+    .stremini-wrapper {
+      position: absolute;
+      top: 200px;
+      left: 100px;
+      width: 160px;
+      height: 160px;
+      touch-action: none;
+      /* Ensure it stays within screen bounds */
+      min-left: 0px;
+      min-top: 0px;
+      max-left: calc(100vw - 160px);
+      max-top: calc(100vh - 160px);
+    }
+
+    .logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(0, 170, 255, 0.6);
+      cursor: pointer;
+      z-index: 2;
+      user-select: none;
+      overflow: hidden;
+      background: #000;
+      transform: translate(-50%, -50%);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .feature-btn {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid transparent;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      cursor: pointer;
+      /* Remove button highlights */
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    .feature-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .feature-btn.active {
+      background: linear-gradient(to right, #00b7ff, #007bff);
+      box-shadow:
+        0 0 8px rgba(0, 174, 255, 0.6),
+        0 0 20px rgba(0, 174, 255, 0.4),
+        inset 0 0 10px rgba(0, 174, 255, 0.3);
+      border: 1px solid rgba(0, 174, 255, 0.6);
+    }
+
+    .btn-1 { transform: translate(-50%, -50%) translateY(-70px); }
+    .btn-2 { transform: translate(-50%, -50%) rotate(45deg) translateY(-70px) rotate(-45deg); }
+    .btn-3 { transform: translate(-50%, -50%) rotate(90deg) translateY(-70px) rotate(-90deg); }
+    .btn-4 { transform: translate(-50%, -50%) rotate(135deg) translateY(-70px) rotate(-135deg); }
+    .btn-5 { transform: translate(-50%, -50%) rotate(180deg) translateY(-70px) rotate(-180deg); }
+
+    .chatbox {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 320px;
+      max-height: 480px;
+      background: #000;
+      border-radius: 20px;
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+      overflow: hidden;
+      border: 1px solid #222;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #111;
+      padding: 12px;
+    }
+
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-header img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .chat-header span {
+      color: white;
+      font-weight: bold;
+    }
+
+    .chat-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 8px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      color: white;
+      background: #1a1a1a;
+      align-self: flex-start;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #007bff;
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #111;
+      border-top: 1px solid #222;
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: #000;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .chat-input button {
+      background: none;
+      border: none;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .chat-input img {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
+    }
+
+    /* AI Manager Styles */
+    .ai-manager {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #111;
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 0 12px #000, 0 0 30px rgba(0, 246, 255, 0.3);
+      display: none;
+      z-index: 1000;
+      color: #fff;
+    }
+
+    .ai-manager h2 {
+      margin: 0 0 20px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ai-manager h2 i { color: #fff; }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .tabs .tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-weight: bold;
+      color: #ccc;
+      transition: all 0.3s ease;
+    }
+
+    .tabs .tab.active {
+      color: #fff;
+      border-bottom-color: #00f6ff;
+    }
+
+    .desc {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .toggle-group {
+      display: flex;
+      margin-bottom: 15px;
+      background: #222;
+      padding: 12px 16px;
+      border-radius: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toggle-group span {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    .toggle-group i {
+      margin-right: 10px;
+      color: #fff;
+    }
+
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #fff;
+      border-radius: 34px;
+      transition: 0.3s;
+    }
+
+    .switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #000;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(0, 207, 255, 0.3);
+    }
+
+    .switch input:checked + .slider {
+      background-color: #fff;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #00eaff;
+      box-shadow: 0 0 10px #00eaff;
+    }
+
+    .mode-toggle-group {
+      display: flex;
+      justify-content: space-around;
+      background: #1e1e1e;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .mode-btn {
+      background: #000;
+      color: #ccc;
+      padding: 6px 12px;
+      border: 1.5px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      transition: all 0.25s ease;
+    }
+
+    .mode-btn.active {
+      color: #00f6ff;
+      border-color: #00f6ff;
+    }
+
+    .text-mic-row {
+      display: flex;
+      gap: 8px;
+      margin: 14px 0;
+      align-items: center;
+    }
+
+    .ai-textbox {
+      flex: 1;
+      padding: 8px 12px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .ai-textbox:focus {
+      border-color: #00f6ff;
+    }
+
+    .mic-btn {
+      width: 38px;
+      height: 38px;
+      background: #222;
+      color: #00f6ff;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .mic-btn:hover {
+      background: #00f6ff;
+      color: #000;
+      transform: scale(1.1);
+    }
+
+    .voice-options {
+      margin-top: 6px;
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .voice-options label {
+      color: #aaa;
+    }
+
+    .voice-options input {
+      accent-color: #00f6ff;
+      margin-right: 4px;
+    }
+
+    .button-wrap {
+      margin-top: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .button-wrap button {
+      background: #fff;
+      color: #000;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fff;
+      transition: 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .button-wrap button:hover {
+      transform: scale(1.05);
+      background: #ddd;
+    }
+    .notification {
+      margin-top: 15px;
+      text-align: center;
+      padding: 10px 20px 10px 42px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #00f6ff;
+      border: 2px solid #00f6ff;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 0 8px #00f6ff66;
+      display: none;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .notification::before {
+      content: '\f00c';
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: #00f6ff;
+    }
+
+    .floating-particle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1001;
+      animation: floatUp 3.2s ease-out forwards;
+      opacity: 0.85;
+      transition: background 1s;
+      filter: blur(0.7px);
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(1); opacity: 0.7; }
+      50%  { opacity: 1; }
+      100% { transform: translateY(-80px) scale(0.6); opacity: 0; }
+    }
+
+    .manager-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .manager-close:hover {
+      color: #fff;
+    }
+
+    /* Protection Panel Styles */
+    .protection-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 36px 30px;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 0 20px rgba(0, 234, 255, 0.15), 0 0 40px rgba(0, 234, 255, 0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: none;
+      z-index: 1000;
+      color: #fff;
+    }
+
+    .protection-panel .panel-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .protection-panel .panel-header img {
+      width: 38px;
+      height: 38px;
+      filter: drop-shadow(0 0 6px rgba(0,234,255,0.5));
+    }
+
+    .protection-panel .panel-header h2 {
+      color: #fff;
+      margin-top: 12px;
+      font-size: 20px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 26px;
+      font-size: 15px;
+      color: #eee;
+    }
+
+    .setting-row .label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #eee;
+      text-shadow: none;
+    }
+
+    .icon-img {
+      width: 18px;
+      height: 18px;
+      filter: drop-shadow(0 0 4px #00eaff);
+    }
+
+    .protection-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .protection-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .protection-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #fff;
+      border-radius: 34px;
+      transition: 0.3s;
+    }
+
+    .protection-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #000;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(0, 207, 255, 0.3);
+    }
+
+    input:checked + .protection-slider {
+      background-color: #fff;
+    }
+
+    input:checked + .protection-slider:before {
+      transform: translateX(20px);
+      background-color: #00eaff;
+      box-shadow: 0 0 10px #00eaff;
+    }
+
+    .activate-btn {
+      width: 100%;
+      background: #fff;
+      color: #000;
+      padding: 10px 14px;
+      font-weight: bold;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fff;
+      margin-top: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .activate-btn:hover {
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+      background: #ddd;
+    }
+
+    .protection-message {
+      display: none;
+      margin-top: 16px;
+      padding: 10px;
+      text-align: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0, 234, 255, 0.15);
+      animation: fadeInOut 2s ease forwards;
+    }
+
+    .protection-message i {
+      color: #00ffcc;
+      margin-right: 8px;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(10px); }
+    }
+
+    .protection-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .protection-close:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stremini-wrapper" id="stremini">
+    <div class="logo" id="logo">
+      <img src="https://i.ibb.co/67d1xHQx/IMG-20250731-125211-109.jpg" alt="Stremini AI Logo" />
+    </div>
+
+    <button class="feature-btn btn-1">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/speech-bubble.png"/>
+    </button>
+    <button class="feature-btn btn-2" id="aiManagerTrigger">
+      <img src="https://img.icons8.com/?size=100&id=60983&format=png&color=ffffff"/>
+    </button>
+    <button class="feature-btn btn-3" id="chatTrigger">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/artificial-intelligence.png"/>
+    </button>
+    <button class="feature-btn btn-4">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/keyboard.png"/>
+    </button>
+    <button class="feature-btn btn-5" id="protectionTrigger">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/shield.png"/>
+    </button>
+  </div>
+
+  <!-- Chat Box -->
+  <div class="chatbox" id="chatBox">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <img src="https://i.ibb.co/67d1xHQx/IMG-20250731-125211-109.jpg" />
+        <span>Stremini AI</span>
+      </div>
+      <button class="chat-close" onclick="document.getElementById('chatBox').style.display='none'">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Ask me anything..." />
+      <button onclick="sendMessage()">
+        <img src="https://img.icons8.com/?size=100&id=IW5bIS9JfkRW&format=png" alt="Send"/>
+      </button>
+      <button>
+        <img src="https://img.icons8.com/material-sharp/24/microphone--v2.png" alt="microphone--v2"/>
+      </button>
+    </div>
+  </div>
+
+  <!-- AI Manager -->
+  <div class="ai-manager" id="aiManager">
+    <button class="manager-close" onclick="closeAIManager()">×</button>
+    <h2><i class="fas fa-robot"></i> AI Manager</h2>
+
+    <div class="tabs">
+      <div class="tab active" id="tabFull" onclick="showManagerTab('full')">Full Control</div>
+      <div class="tab" id="tabCustom" onclick="showManagerTab('custom')">Customized</div>
+    </div>
+
+    <!-- Full Control Tab -->
+    <div id="contentFull">
+      <div class="desc">Your personal AI manager that can do anything you command</div>
+      <div class="mode-toggle-group">
+        <button class="mode-btn active" id="fc-mode-text" onclick="setFullControlMode('text')">Text</button>
+        <button class="mode-btn" id="fc-mode-mic" onclick="setFullControlMode('mic')">Mic</button>
+        <button class="mode-btn" id="fc-mode-both" onclick="setFullControlMode('both')">Both</button>
+      </div>
+      <div id="fc-ui-area"></div>
+      <div class="button-wrap">
+        <button id="btnActivate" onclick="onActivate()">Activate</button>
+      </div>
+    </div>
+
+    <!-- Customized Tab -->
+    <div id="contentCustom" style="display: none;">
+      <div class="toggle-group">
+        <span><i class="fas fa-cogs"></i> Control Apps</span>
+        <div class="switch" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-group">
+        <span><i class="fas fa-comments"></i> Agent for Calls & Messages</span>
+        <div class="switch" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-group">
+        <span><i class="fas fa-microphone"></i> Live Talker</span>
+        <div class="switch" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="text-mic-row">
+        <input class="ai-textbox" type="text" placeholder="Type your command...">
+        <button class="mic-btn"><i class="fas fa-microphone"></i></button>
+      </div>
+      <div class="button-wrap">
+        <button id="btnSaveActivate" onclick="onSaveActivate()">Save & Activate</button>
+      </div>
+    </div>
+
+    <div id="notif" class="notification"></div>
+  </div>
+
+  <!-- Protection Panel -->
+  <div class="protection-panel" id="protectionPanel">
+    <button class="protection-close" onclick="closeProtectionPanel()">×</button>
+    <div class="panel-header">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/shield.png" alt="Shield Icon" />
+      <h2>STREMINI AI PROTECTION</h2>
+    </div>
+
+    <div class="setting-row">
+      <div class="label">
+        <img src="https://img.icons8.com/?size=100&id=rFZRE05TYCqO&format=png&color=ffffff" alt="ad block" class="icon-img"/>
+        Block Ads
+      </div>
+      <label class="protection-switch">
+        <input type="checkbox" id="ads">
+        <span class="protection-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <div class="label">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/shield.png" alt="shield" class="icon-img"/>
+        Block Phishing
+      </div>
+      <label class="protection-switch">
+        <input type="checkbox" id="phishing">
+        <span class="protection-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <div class="label">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/code.png" alt="script" class="icon-img"/>
+        Script Tracker
+      </div>
+      <label class="protection-switch">
+        <input type="checkbox" id="scripts">
+        <span class="protection-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <div class="label">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/filter.png" alt="filter" class="icon-img"/>
+        Spam Filter
+      </div>
+      <label class="protection-switch">
+        <input type="checkbox" id="spam">
+        <span class="protection-slider"></span>
+      </label>
+    </div>
+
+    <button class="activate-btn" id="protectionActivateBtn" onclick="saveProtectionSettings()">Save & Activate</button>
+
+    <div class="protection-message" id="protectionStatus">
+      <i class="fas fa-check-circle"></i>
+      Protection Activated!
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logo = document.getElementById('logo');
+      const wrapper = document.getElementById('stremini');
+      const buttons = document.querySelectorAll('.feature-btn');
+      const chatBox = document.getElementById('chatBox');
+      const chatTrigger = document.getElementById('chatTrigger');
+      const aiManager = document.getElementById('aiManager');
+      const aiManagerTrigger = document.getElementById('aiManagerTrigger');
+      const protectionPanel = document.getElementById('protectionPanel');
+      const protectionTrigger = document.getElementById('protectionTrigger');
+
+      let revealed = false;
+      let isDragging = false;
+      let offsetX = 0, offsetY = 0;
+
+      // Logo click to reveal buttons
+      logo.addEventListener('click', () => {
+        revealed = !revealed;
+        buttons.forEach((btn, index) => {
+          setTimeout(() => {
+            btn.style.opacity = revealed ? 1 : 0;
+          }, index * 100);
+        });
+      });
+
+      // Button activation
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Chat trigger
+      chatTrigger.addEventListener('click', () => {
+        chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
+      });
+
+      // AI Manager trigger
+      aiManagerTrigger.addEventListener('click', () => {
+        aiManager.style.display = aiManager.style.display === 'block' ? 'none' : 'block';
+      });
+
+      // Protection Panel trigger
+      protectionTrigger.addEventListener('click', () => {
+        protectionPanel.style.display = protectionPanel.style.display === 'block' ? 'none' : 'block';
+      });
+
+      // Dragging functionality
+      const startDrag = (x, y) => {
+        const rect = wrapper.getBoundingClientRect();
+        offsetX = x - rect.left;
+        offsetY = y - rect.top;
+        isDragging = true;
+      };
+
+      const moveDrag = (x, y) => {
+        if (!isDragging) return;
+        
+        // Calculate new position
+        let newLeft = x - offsetX;
+        let newTop = y - offsetY;
+        
+        // Get screen boundaries
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const wrapperWidth = 160;
+        const wrapperHeight = 160;
+        
+        // Allow 50% of bubble to go outside screen (half visible)
+        const halfWidth = wrapperWidth / 2;
+        const halfHeight = wrapperHeight / 2;
+        
+        // Keep at least 50% within boundaries
+        newLeft = Math.max(-halfWidth, Math.min(newLeft, screenWidth - halfWidth));
+        newTop = Math.max(-halfHeight, Math.min(newTop, screenHeight - halfHeight));
+        
+        wrapper.style.left = `${newLeft}px`;
+        wrapper.style.top = `${newTop}px`;
+      };
+
+      logo.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
+      document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+      document.addEventListener('mouseup', () => isDragging = false);
+
+      logo.addEventListener('touchstart', e => {
+        const t = e.touches[0];
+        startDrag(t.clientX, t.clientY);
+      });
+      document.addEventListener('touchmove', e => {
+        const t = e.touches[0];
+        moveDrag(t.clientX, t.clientY);
+      });
+      document.addEventListener('touchend', () => isDragging = false);
+
+      // Initialize AI Manager
+      setFullControlMode('text');
+      startFloatingParticles('btnActivate');
+      startFloatingParticles('btnSaveActivate');
+      startFloatingParticles('protectionActivateBtn');
+    });
+
+    // Chat functionality
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const messages = document.getElementById('chatMessages');
+      const msg = input.value.trim();
+      if (msg === "") return;
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user';
+      userDiv.innerText = msg;
+      messages.appendChild(userDiv);
+
+      const lower = msg.toLowerCase();
+      let reply = "";
+
+      if (["hi", "hello"].some(w => lower.includes(w))) {
+        reply = "Hey there! I'm Stremini – your AI assistant & digital bodyguard.";
+      } else if (lower.includes("who are you")) {
+        reply = "I'm Stremini, your personal AI assistant – here to guide, help, and secure.";
+      } else if (lower.includes("what can you do")) {
+        reply = "I can assist with questions, help you explore Stremini features, and guard you.";
+      } else if (lower.includes("how to use")) {
+        reply = "Just ask me anything. Use the circular buttons for feature access too!";
+      } else if (lower.includes("is it free")) {
+        reply = "Don't worry, it's 100% free.";
+      } else if (lower.includes("what is stremini")) {
+        reply = "Stremini is your smart AI assistant and digital bodyguard -- designed to protect and guide you online.";
+      } else if (lower.includes("thank")) {
+        reply = "You're welcome! 😊";
+      } else if (lower === "bye") {
+        reply = "Take care! Ping me anytime.";
+      } else if (lower.includes("are you an ai")) {
+        reply = "Yes, I'm your intelligent assistant, ready 24/7!";
+      } else if (lower.includes("when will stremini get launch") || lower.includes("launch")) {
+        reply = "Don't worry, when it launches, everyone will know. 😉";
+      } else {
+        reply = "I'm still learning. Try asking something else!";
+      }
+
+      const aiDiv = document.createElement('div');
+      aiDiv.className = 'message';
+      aiDiv.innerText = reply;
+      messages.appendChild(aiDiv);
+
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // AI Manager functionality
+    const fcModes = ['text', 'mic', 'both'];
+
+    function showManagerTab(mode) {
+      document.getElementById('tabFull').classList.toggle('active', mode === 'full');
+      document.getElementById('tabCustom').classList.toggle('active', mode === 'custom');
+      document.getElementById('contentFull').style.display = mode === 'full' ? 'block' : 'none';
+      document.getElementById('contentCustom').style.display = mode === 'custom' ? 'block' : 'none';
+    }
+
+    function setFullControlMode(mode) {
+      fcModes.forEach(m => {
+        document.getElementById(`fc-mode-${m}`).classList.toggle('active', m === mode);
+      });
+
+      const area = document.getElementById('fc-ui-area');
+      area.innerHTML = '';
+      if (mode === 'text') {
+        area.innerHTML = `<div class="text-mic-row"><input class="ai-textbox" type="text" placeholder="Type your command..."></div>`;
+      } else if (mode === 'mic') {
+        area.innerHTML = `<div class="text-mic-row"><button class="mic-btn"><i class="fas fa-microphone"></i></button></div>
+          <div class="voice-options">
+            <label><input type="radio" name="fcMode" checked> Live</label>
+            <label><input type="radio" name="fcMode"> On Demand</label>
+          </div>`;
+      } else {
+        area.innerHTML = `<div class="text-mic-row">
+            <input class="ai-textbox" type="text" placeholder="Type your command...">
+            <button class="mic-btn"><i class="fas fa-microphone"></i></button>
+          </div>
+          <div class="voice-options">
+            <label><input type="radio" name="fcMode" checked> Live</label>
+            <label><input type="radio" name="fcMode"> On Demand</label>
+          </div>`;
+      }
+    }
+
+    function toggleSwitch(el) {
+      // This function is no longer needed as we're using proper checkbox inputs
+      // Keeping it for backward compatibility but it won't be called
+    }
+
+    function showNotification(msg) {
+      const notif = document.getElementById('notif');
+      notif.textContent = msg;
+      notif.style.display = 'block';
+      notif.style.opacity = '1';
+
+      setTimeout(() => {
+        notif.style.opacity = '0';
+        setTimeout(() => {
+          notif.style.display = 'none';
+        }, 400);
+      }, 2400);
+    }
+
+    function onActivate() {
+      showNotification('Stremini at your service now');
+    }
+
+    function onSaveActivate() {
+      showNotification('Customized activation complete! Stremini ready!');
+    }
+
+    function closeAIManager() {
+      document.getElementById('aiManager').style.display = 'none';
+    }
+
+    function closeProtectionPanel() {
+      document.getElementById('protectionPanel').style.display = 'none';
+    }
+
+    function saveProtectionSettings() {
+      const msg = document.getElementById('protectionStatus');
+      msg.style.display = 'block';
+      setTimeout(() => {
+        msg.style.display = 'none';
+      }, 2000);
+    }
+
+    function startFloatingParticles(buttonId) {
+      const btn = document.getElementById(buttonId);
+      setInterval(() => {
+        if (!btn) return;
+        const rect = btn.getBoundingClientRect();
+        const size = Math.random() * 3 + 1.5;
+        const offset = Math.random() * btn.offsetWidth;
+
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.width = particle.style.height = size + 'px';
+        particle.style.backgroundColor = Math.random() < 0.5 ? '#fff' : '#00f6ff';
+        particle.style.left = rect.left + offset + 'px';
+        particle.style.top = (rect.top + rect.height / 2) + 'px';
+
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 3200);
+      }, 220);
+    }
+
+    // Allow Enter key to send messages
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>

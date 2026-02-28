@@ -1,0 +1,8 @@
+
+{
+  "name": "Stremini AI Demo",
+  "description": "An interactive mobile app simulation showcasing the Stremini AI ecosystem: floating bubble, AI keyboard, scam detection, and automation.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

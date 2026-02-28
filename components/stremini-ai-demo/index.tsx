@@ -7,6 +7,7 @@ import { HomeScreen } from './HomeScreen';
 import { WhatsAppScreen } from './WhatsAppScreen';
 import { ScamShieldView } from './ScamShieldView';
 import { AIKeyboard } from './AIKeyboard';
+import Image from 'next/image';
 import { ChatBotOverlay } from './ChatBotOverlay';
 import { AutoTaskerModal } from './AutoTaskerModal';
 export enum AppScreen {
@@ -44,10 +45,13 @@ const App: React.FC = () => {
           <span className="text-[10px] font-bold tracking-widest uppercase bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">lunar</span>
         </div>
         <div className="mb-12 animate-in fade-in zoom-in duration-1000">
-          <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/20 mx-auto mb-6 border border-white/10">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-12 h-12 text-white">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
+          <div className="w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center shadow-2xl mx-auto mb-6 border border-white/10 overflow-hidden relative">
+            <Image
+              src="/stremio-logo.png"
+              alt="Stremini Logo"
+              fill
+              className="object-contain p-2"
+            />
           </div>
           <h1 className="text-5xl font-black text-white mb-4 tracking-tight">STREMINI AI</h1>
           <p className="text-gray-400 max-w-md mx-auto text-lg leading-relaxed">

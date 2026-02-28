@@ -53,7 +53,7 @@ export function Hero() {
             </MagneticWrapper>
             <MagneticWrapper strength={0.2}>
               <Button asChild variant="outline">
-                <Link href="#features">Explore Features</Link>
+                <Link href="/demo">Demo</Link>
               </Button>
             </MagneticWrapper>
           </motion.div>
@@ -64,7 +64,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             {[
-              { label: "MVP Building", sublabel: "Status" },
+              { label: "Launch", sublabel: "Status" },
               { label: "24/7 Available", sublabel: "AI Chatbot" },
               { label: "Fully Safe", sublabel: "Security" },
               { label: "24/7 Available", sublabel: "Digital Protection" },
