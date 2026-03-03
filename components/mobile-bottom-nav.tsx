@@ -9,7 +9,7 @@ const items = [
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Team", href: "/team", icon: Users },
   { label: "About", href: "/about", icon: Info },
-  { label: "Wishlist", href: "/wishlist", icon: Heart },
+{ label: "Waitlist", href: "/waitlist", icon: Heart },
 ]
 
 export function MobileBottomNav() {

@@ -1,4 +1,10 @@
+import type { Metadata } from "next"
 import { Gallery } from "@/components/sections/gallery"
+
+export const metadata: Metadata = {
+  title: "Gallery - Stremini AI",
+  description: "View screenshots and visuals of Stremini AI in action.",
+}
 
 export default function GalleryPage() {
   return (

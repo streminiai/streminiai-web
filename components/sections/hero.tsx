@@ -48,7 +48,7 @@ export function Hero() {
           >
             <MagneticWrapper strength={0.2}>
               <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-                <Link href="/wishlist">Join Waitlist</Link>
+<Link href="/waitlist">Join Waitlist</Link>
               </Button>
             </MagneticWrapper>
             <MagneticWrapper strength={0.2}>

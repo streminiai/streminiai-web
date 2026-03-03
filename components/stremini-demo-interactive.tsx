@@ -228,7 +228,7 @@ export function StreminiDemoInteractive() {
                 <div className="text-center mt-12">
                     <p className="text-muted-foreground mb-4">Ready to experience Stremini for real?</p>
                     <Button asChild size="lg" className="bg-gradient-to-r from-primary to-accent">
-                        <Link href="/wishlist">Join the Waitlist</Link>
+<Link href="/waitlist">Join the Waitlist</Link>
                     </Button>
                 </div>
             </div>

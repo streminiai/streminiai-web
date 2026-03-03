@@ -13,17 +13,17 @@ export function Footer() {
         <nav aria-label="Footer">
           <ul className="flex flex-wrap items-center gap-4 text-sm">
             <li>
-              <Link href="#pricing" className="hover:text-primary">
-                Pricing
+              <Link href="/features" className="hover:text-primary">
+                Features
               </Link>
             </li>
             <li>
-              <Link href="#about" className="hover:text-primary">
+              <Link href="/about" className="hover:text-primary">
                 About
               </Link>
             </li>
             <li>
-              <Link href="#faq" className="hover:text-primary">
+              <Link href="/features#faq" className="hover:text-primary">
                 FAQ
               </Link>
             </li>
@@ -33,7 +33,7 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="#" className="hover:text-primary">
+              <Link href="/#contact" className="hover:text-primary">
                 Contact
               </Link>
             </li>

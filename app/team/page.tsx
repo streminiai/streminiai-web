@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Users, Zap, Megaphone, Briefcase } from "lucide-react"
@@ -270,7 +268,7 @@ export default function TeamPage() {
               We&apos;re always looking for talented individuals to help us build the future of AI assistance
             </p>
             <Link
-              href="/wishlist"
+href="/waitlist"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-8 py-3 font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
             >
               Get in Touch

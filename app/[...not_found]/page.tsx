@@ -56,7 +56,7 @@ export default function NotFound() {
               { label: "Features", href: "/features" },
               { label: "About", href: "/about" },
               { label: "Team", href: "/team" },
-              { label: "Wishlist", href: "/wishlist" },
+{ label: "Waitlist", href: "/waitlist" },
             ].map((link) => (
               <Link
                 key={link.href}

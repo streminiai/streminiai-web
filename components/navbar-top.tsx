@@ -30,7 +30,7 @@ export function NavbarTop() {
             </Link>
           ))}
           <Button asChild className="ml-2 bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-            <Link href="/wishlist">Join Wishlist</Link>
+<Link href="/waitlist">Join Waitlist</Link>
           </Button>
         </div>
       </nav>

@@ -1,9 +1,14 @@
-"use client"
-
+import type { Metadata } from "next"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Bot, Zap, Cpu, MessageSquare, ShieldCheck, Keyboard, Check } from "lucide-react"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Features - Stremini AI",
+  description:
+    "Explore Stremini's powerful features: Smart Auto Tasker, Talk Assist, AI Keyboard, Smart Protection, and more.",
+}
 
 const features = [
   {
@@ -122,7 +127,7 @@ export default function FeaturesPage() {
             Join our waitlist to get early access and be among the first to transform your productivity.
           </p>
           <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-            <Link href="/wishlist">Join Waitlist</Link>
+<Link href="/waitlist">Join Waitlist</Link>
           </Button>
         </div>
       </div>

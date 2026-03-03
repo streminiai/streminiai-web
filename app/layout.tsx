@@ -8,7 +8,6 @@ import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
 import SidebarDemo from "@/components/sidebar-demo"
 import { Footer } from "@/components/footer"
-import { CursorOrb } from "@/components/ui/cursor-orb"
 import { PageTransition } from "@/components/ui/page-transition"
 import { AnimatePresence } from "framer-motion"
 import { MobileBottomNav } from "@/components/mobile-bottom-nav"
@@ -177,7 +176,6 @@ export default function RootLayout({
             <Footer />
             <MobileBottomNav />
           </SidebarDemo>
-          <CursorOrb />
           <Analytics />
         </Suspense>
       </body>
