@@ -14,7 +14,7 @@ export function Footer() {
           <ul className="flex flex-wrap items-center gap-4 text-sm">
             <li>
               <Link href="/features" className="hover:text-primary">
-                Pricing
+                Features
               </Link>
             </li>
             <li>
