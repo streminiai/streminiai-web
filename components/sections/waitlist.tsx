@@ -27,8 +27,8 @@ export function Waitlist() {
 
   return (
     <div className="mx-auto max-w-2xl px-4">
-      <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">Join the Waitlist</h2>
-      <p className="mt-2 text-center text-sm text-muted-foreground">Be the first to try Stremini. No spam, ever.</p>
+      <h2 className="text-balance text-center text-3xl font-semibold md:text-4xl">Join our Community</h2>
+      <p className="mt-2 text-center text-sm text-muted-foreground">Stay updated with the latest from Stremini. No spam, ever.</p>
       <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-3 sm:flex-row">
         <Input
           type="email"

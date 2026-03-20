@@ -9,7 +9,7 @@ import {
     IconPhoto,
     IconInfoCircle,
     IconUsers,
-    IconHeart,
+    IconBriefcase,
     IconBook,
     IconDeviceImac,
 } from "@tabler/icons-react";
@@ -54,10 +54,10 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
             ),
         },
         {
-            label: "Waitlist",
-            href: "/waitlist",
+            label: "Careers",
+            href: "/careers",
             icon: (
-                <IconHeart className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
+                <IconBriefcase className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
             ),
         },
         {

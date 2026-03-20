@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Heart, Users, ImageIcon, Info, BookOpen } from "lucide-react"
+import { Home, Briefcase, Users, ImageIcon, Info, BookOpen } from "lucide-react"
 
 const items = [
   { label: "Home", href: "/", icon: Home },
@@ -9,7 +9,7 @@ const items = [
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Team", href: "/team", icon: Users },
   { label: "About", href: "/about", icon: Info },
-{ label: "Waitlist", href: "/waitlist", icon: Heart },
+  { label: "Careers", href: "/careers", icon: Briefcase },
 ]
 
 export function MobileBottomNav() {

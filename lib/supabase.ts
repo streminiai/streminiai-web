@@ -74,6 +74,30 @@ export type SiteSetting = {
     updated_at: string
 }
 
+export type Job = {
+    id: string
+    title: string
+    description: string
+    location: string
+    type: string
+    department: string
+    is_active: boolean
+    created_at: string
+    updated_at: string
+}
+
+export type JobApplication = {
+    id: string
+    job_id: string | null
+    full_name: string
+    email: string
+    portfolio_url: string | null
+    resume_url: string | null
+    message: string | null
+    status: 'pending' | 'reviewed' | 'interview' | 'rejected' | 'hired'
+    created_at: string
+}
+
 export const categoryLabels: Record<TeamMember['category'], string> = {
     'founder': 'Founder',
     'co-founder': 'Co-Founders',

@@ -9,9 +9,7 @@
 
 ## 🌟 Overview
 
-Stremini AI is an intelligent floating assistant that enhances your digital security and productivity. This repository contains the official website showcasing features, team, and waitlist signup.
-
-**🔗 Live Site:** [stremini.site](https://stremini.site)
+Stremini AI is an intelligent floating assistant that enhances your digital security and productivity. **Our platform is now officially launched**, providing smart protection and automation across all your digital tasks.
 
 ## ✨ Features
 

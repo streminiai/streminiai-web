@@ -1,7 +1,6 @@
-# Stremini Website Blueprint
-
-## Overview
-Stremini is a premium website for an AI-powered platform, designed with a high-tech, futuristic aesthetic. It features a dark theme, glassmorphism effects, and dynamic interactive elements to provide a "wow" factor for users.
+# Stremini WebsiStatus: Launched 🚀
+Overview: Stremini is a revolutionary, intent-aware AI assistant designed to float seamlessly within your digital environment. It provides real-time security alerts and productivity enhancements based on user intent, all while maintaining a premium, futuristic aesthetic.
+ractive elements to provide a "wow" factor for users.
 
 ## Project Documentation
 
@@ -12,7 +11,8 @@ Stremini is a premium website for an AI-powered platform, designed with a high-t
 - **Layout**: Responsive design with a sidebar navigation and structured sections (Hero, Features, Gallery, Team, Blog).
 
 ### Features
-- **Waitlist System**: Integrated with Supabase for user signups.
+- **Careers & Recruitment**: Dedicated careers page with live job listings and an integrated application form.
+- **Admin Dashboard**: Comprehensive management of waitlist, job postings, and applications.
 - **Blog Section**: Dynamic blog posts fetched from Supabase with an admin dashboard for management.
 - **Team Page**: Showcases team members with social links.
 - **Interactive Elements**:

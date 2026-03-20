@@ -30,13 +30,14 @@ import {
     Star,
     Upload,
     Shield,
+    ExternalLink
 } from "lucide-react"
-import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, UserRoleView } from "@/lib/supabase"
+import { supabase, WaitlistEntry, TeamMember, categoryLabels, BlogPost, SiteSetting, SurveyStats, UserRole, getUserRole, getAllUserRoles, updateUserRole, UserRoleView, Job, JobApplication } from "@/lib/supabase"
 import { inviteUser } from "./actions"
 import { BlogEditor } from "@/components/blog-editor"
 import { AIBackendTester } from "@/components/ai-backend-tester"
 
-type Tab = "waitlist" | "team" | "blog" | "ai-backend" | "settings" | "permissions"
+type Tab = "waitlist" | "team" | "blog" | "ai-backend" | "settings" | "permissions" | "careers"
 type FilterStatus = "all" | "pending" | "approved" | "removed"
 
 // Login component
@@ -659,6 +660,8 @@ function Dashboard() {
     const [entries, setEntries] = useState<WaitlistEntry[]>([])
     const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+    const [jobs, setJobs] = useState<Job[]>([])
+    const [applications, setApplications] = useState<JobApplication[]>([])
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all")
@@ -666,6 +669,8 @@ function Dashboard() {
     const [showMemberModal, setShowMemberModal] = useState(false)
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
     const [showPostModal, setShowPostModal] = useState(false)
+    const [selectedJob, setSelectedJob] = useState<Job | null>(null)
+    const [showJobModal, setShowJobModal] = useState(false)
     const [siteSettings, setSiteSettings] = useState<SiteSetting[]>([])
     const [savingSettings, setSavingSettings] = useState(false)
     const [userRoles, setUserRoles] = useState<UserRole[] | null>(null)
@@ -696,17 +701,21 @@ function Dashboard() {
                 }
             }
 
-            const [waitlistRes, teamRes, blogRes, settingsRes] = await Promise.all([
+            const [waitlistRes, teamRes, blogRes, settingsRes, jobsRes, appsRes] = await Promise.all([
                 supabase.from("waitlist").select("*").order("created_at", { ascending: false }),
                 supabase.from("team_members").select("*").order("display_order", { ascending: true }),
                 supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
                 supabase.from("site_settings").select("*"),
+                supabase.from("jobs").select("*").order("created_at", { ascending: false }),
+                supabase.from("job_applications").select("*").order("created_at", { ascending: false }),
             ])
-
+            
             if (waitlistRes.data) setEntries(waitlistRes.data)
             if (teamRes.data) setTeamMembers(teamRes.data)
             if (blogRes.data) setBlogPosts(blogRes.data)
             if (settingsRes.data) setSiteSettings(settingsRes.data)
+            if (jobsRes.data) setJobs(jobsRes.data)
+            if (appsRes.data) setApplications(appsRes.data)
         } catch (error) {
             console.error("Error fetching data:", error)
         } finally {
@@ -802,6 +811,48 @@ function Dashboard() {
         a.href = url
         a.download = `waitlist-${new Date().toISOString().split("T")[0]}.csv`
         a.click()
+    }
+
+    const saveJob = async (data: Partial<Job>) => {
+        if (selectedJob) {
+            const { error } = await supabase
+                .from("jobs")
+                .update({ ...data, updated_at: new Date().toISOString() })
+                .eq("id", selectedJob.id)
+            if (!error) {
+                setJobs((prev) => prev.map((j) => (j.id === selectedJob.id ? { ...j, ...data } as Job : j)))
+            }
+        } else {
+            const { data: newJob, error } = await supabase
+                .from("jobs")
+                .insert([data])
+                .select()
+                .single()
+            if (!error && newJob) {
+                setJobs((prev) => [newJob, ...prev])
+            }
+        }
+        setShowJobModal(false)
+        setSelectedJob(null)
+    }
+
+    const deleteJob = async (id: string) => {
+        if (!confirm("Delete this job posting?")) return
+        const { error } = await supabase.from("jobs").delete().eq("id", id)
+        if (!error) setJobs((prev) => prev.filter((j) => j.id !== id))
+    }
+
+    const updateApplicationStatus = async (id: string, status: JobApplication["status"]) => {
+        const { error } = await supabase.from("job_applications").update({ status }).eq("id", id)
+        if (!error) {
+            setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)))
+        }
+    }
+
+    const deleteApplication = async (id: string) => {
+        if (!confirm("Delete this application?")) return
+        const { error } = await supabase.from("job_applications").delete().eq("id", id)
+        if (!error) setApplications((prev) => prev.filter((a) => a.id !== id))
     }
 
     const handleLogout = async () => {
@@ -1010,6 +1061,14 @@ function Dashboard() {
                             >
                                 <Shield className="w-4 h-4 inline mr-2" />
                                 Permissions
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("careers")}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "careers" ? "bg-purple-500 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                                    }`}
+                            >
+                                <Briefcase className="w-4 h-4 inline mr-2" />
+                                Careers
                             </button>
                         </>
                     )}
@@ -1373,6 +1432,186 @@ function Dashboard() {
                     </>
                 )}
 
+                {/* Careers Tab */}
+                {activeTab === "careers" && (
+                    <div className="space-y-8">
+                        {/* Job Postings Section */}
+                        <section>
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-bold flex items-center gap-2">
+                                    <Briefcase className="w-5 h-5 text-purple-500" />
+                                    Job Postings
+                                </h2>
+                                <button
+                                    onClick={() => {
+                                        setSelectedJob(null)
+                                        setShowJobModal(true)
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl text-white font-medium shadow-lg shadow-purple-500/20"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Add Job
+                                </button>
+                            </div>
+
+                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                {jobs.map((job) => (
+                                    <div key={job.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden group">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="p-2 rounded-lg bg-purple-500/10">
+                                                <Briefcase className="w-5 h-5 text-purple-400" />
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedJob(job)
+                                                        setShowJobModal(true)
+                                                    }}
+                                                    className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 transition-colors"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteJob(job.id)}
+                                                    className="p-2 rounded-lg hover:bg-slate-800 text-red-400 transition-colors"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-white mb-1">{job.title}</h3>
+                                        <p className="text-sm text-slate-400 mb-4">{job.department}</p>
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-300 uppercase letter-spacing-wider">
+                                                {job.location}
+                                            </span>
+                                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-300 uppercase letter-spacing-wider">
+                                                {job.type}
+                                            </span>
+                                            {job.is_active ? (
+                                                <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-bold text-green-400 uppercase letter-spacing-wider border border-green-500/20">
+                                                    Active
+                                                </span>
+                                            ) : (
+                                                <span className="px-2 py-0.5 rounded-full bg-red-500/10 text-[10px] font-bold text-red-400 uppercase letter-spacing-wider border border-red-500/20">
+                                                    Inactive
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                {jobs.length === 0 && (
+                                    <div className="md:col-span-2 lg:col-span-3 border-2 border-dashed border-slate-800 rounded-2xl p-12 text-center">
+                                        <p className="text-slate-500">No job postings yet.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+
+                        {/* Job Applications Section */}
+                        <section>
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-bold flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-blue-500" />
+                                    Job Applications
+                                </h2>
+                                <div className="text-sm text-slate-400">
+                                    Total: {applications.length}
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="border-b border-slate-800 bg-slate-800/30">
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Applicant</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Portfolio / Links</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-800/50">
+                                            {applications.map((app) => (
+                                                <tr key={app.id} className="hover:bg-slate-800/20 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-bold text-white">{app.full_name}</span>
+                                                            <span className="text-xs text-slate-400">{app.email}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {app.portfolio_url && (
+                                                            <a
+                                                                href={app.portfolio_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors"
+                                                            >
+                                                                <ExternalLink className="w-3 h-3" />
+                                                                View portfolio
+                                                            </a>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <select
+                                                            value={app.status}
+                                                            onChange={(e) => updateApplicationStatus(app.id, e.target.value as JobApplication["status"])}
+                                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all focus:outline-none border border-slate-800 bg-slate-950 ${
+                                                                app.status === "interview" || app.status === "hired"
+                                                                    ? "text-green-400 border-green-500/30"
+                                                                    : app.status === "rejected"
+                                                                    ? "text-red-400 border-red-500/30"
+                                                                    : "text-yellow-400 border-yellow-500/30"
+                                                            }`}
+                                                        >
+                                                            <option value="pending">Pending</option>
+                                                            <option value="reviewing">Reviewing</option>
+                                                            <option value="approved">Approved</option>
+                                                            <option value="rejected">Rejected</option>
+                                                        </select>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-slate-400">
+                                                        {new Date(app.created_at).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => {
+                                                                    alert(`Message from ${app.full_name}:\n\n${app.message}`)
+                                                                }}
+                                                                className="p-2 rounded-lg hover:bg-slate-800 text-blue-400 transition-colors"
+                                                                title="View Message"
+                                                            >
+                                                                <Mail className="w-4 h-4" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => deleteApplication(app.id)}
+                                                                className="p-2 rounded-lg hover:bg-slate-800 text-red-500 transition-colors"
+                                                                title="Delete Application"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {applications.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500 italic">
+                                                        No applications received yet.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                )}
+
                 {/* AI Backend Tab */}
                 {activeTab === "ai-backend" && (
                     <AIBackendTester />
@@ -1617,6 +1856,133 @@ function Dashboard() {
                     </div>
                 )}
             </div>
+
+            {/* Job Modal */}
+            <AnimatePresence>
+                {showJobModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
+                                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                    <Briefcase className="w-5 h-5 text-purple-500" />
+                                    {selectedJob ? "Edit Job Posting" : "Add New Job"}
+                                </h3>
+                                <button
+                                    onClick={() => {
+                                        setShowJobModal(false)
+                                        setSelectedJob(null)
+                                    }}
+                                    className="p-2 hover:bg-slate-700 rounded-lg text-slate-400 transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    const formData = new FormData(e.currentTarget)
+                                    saveJob({
+                                        title: formData.get("title") as string,
+                                        department: formData.get("department") as string,
+                                        location: formData.get("location") as string,
+                                        type: formData.get("type") as string,
+                                        is_active: formData.get("is_active") === "on",
+                                        description: formData.get("description") as string,
+                                    })
+                                }}
+                                className="p-6 space-y-4"
+                            >
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="col-span-2">
+                                        <label className="block text-sm font-medium text-slate-400 mb-2">Title</label>
+                                        <input
+                                            name="title"
+                                            defaultValue={selectedJob?.title}
+                                            required
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-400 mb-2">Department</label>
+                                        <input
+                                            name="department"
+                                            defaultValue={selectedJob?.department}
+                                            required
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-400 mb-2">Location</label>
+                                        <input
+                                            name="location"
+                                            defaultValue={selectedJob?.location}
+                                            required
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-400 mb-2">Type</label>
+                                        <input
+                                            name="type"
+                                            defaultValue={selectedJob?.type}
+                                            placeholder="Full-time, Remote, etc."
+                                            required
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 p-3 rounded-xl self-end h-[50px]">
+                                        <input
+                                            type="checkbox"
+                                            name="is_active"
+                                            id="is_active"
+                                            defaultChecked={selectedJob ? selectedJob.is_active : true}
+                                            className="w-5 h-5 accent-purple-500"
+                                        />
+                                        <label htmlFor="is_active" className="text-sm font-medium text-slate-400 cursor-pointer">
+                                            Active / Visible
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-2">Description</label>
+                                    <textarea
+                                        name="description"
+                                        defaultValue={selectedJob?.description}
+                                        rows={4}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                                    />
+                                </div>
+
+                                <div className="pt-4 flex gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowJobModal(false)
+                                            setSelectedJob(null)
+                                        }}
+                                        className="flex-1 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="flex-1 px-4 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-semibold shadow-lg shadow-purple-500/20 transition-all"
+                                    >
+                                        {selectedJob ? "Update Job" : "Create Job"}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             {/* Team Member Modal */}
             <AnimatePresence>
