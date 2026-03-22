@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Briefcase, Users, ImageIcon, Info, BookOpen } from "lucide-react"
+import { Home, Download, Users, ImageIcon, Info, BookOpen } from "lucide-react"
 
 const items = [
   { label: "Home", href: "/", icon: Home },
@@ -9,7 +9,7 @@ const items = [
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Team", href: "/team", icon: Users },
   { label: "About", href: "/about", icon: Info },
-  { label: "Careers", href: "/careers", icon: Briefcase },
+  { label: "Download", href: "https://play.google.com/store/apps/details?id=com.Android.stremini_ai&hl=en_IN", icon: Download, external: true },
 ]
 
 export function MobileBottomNav() {
@@ -25,6 +25,8 @@ export function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noopener noreferrer" : undefined}
               className={`flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               aria-current={isActive ? "page" : undefined}

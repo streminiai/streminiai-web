@@ -20,10 +20,13 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
     message: "",
   })
 
+  const [errorMessage, setErrorMessage] = useState("")
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setStatus("idle")
+    setErrorMessage("")
 
     try {
       const result = await submitJobApplication({ ...formData, jobTitle })
@@ -33,10 +36,13 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
         setFormData({ name: "", email: "", portfolio: "", message: "" })
       } else {
         setStatus("error")
+        setErrorMessage(result.error || "Unknown error occurred from server.")
+        console.error("Server Action Error:", result.error)
       }
     } catch (error) {
       console.error("Submission error:", error)
       setStatus("error")
+      setErrorMessage(error instanceof Error ? error.message : "Unknown error caught in client.")
     } finally {
       setLoading(false)
     }
@@ -84,8 +90,10 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Full Name</label>
+            <label htmlFor="name" className="text-sm font-medium text-slate-300">Full Name</label>
             <Input
+              id="name"
+              name="name"
               required
               placeholder="John Doe"
               value={formData.name}
@@ -94,8 +102,10 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Email Address</label>
+            <label htmlFor="email" className="text-sm font-medium text-slate-300">Email Address</label>
             <Input
+              id="email"
+              name="email"
               required
               type="email"
               placeholder="john@example.com"
@@ -107,8 +117,10 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300">Portfolio / LinkedIn / Resume Link</label>
+          <label htmlFor="portfolio" className="text-sm font-medium text-slate-300">Portfolio / LinkedIn / Resume Link</label>
           <Input
+            id="portfolio"
+            name="portfolio"
             placeholder="https://..."
             value={formData.portfolio}
             onChange={(e) => setFormData({ ...formData, portfolio: e.target.value })}
@@ -117,8 +129,10 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300">Why do you want to join Stremini?</label>
+          <label htmlFor="message" className="text-sm font-medium text-slate-300">Why do you want to join Stremini?</label>
           <Textarea
+            id="message"
+            name="message"
             required
             placeholder="Tell us about yourself and your experience..."
             rows={4}
@@ -129,9 +143,12 @@ export function CareersForm({ jobTitle }: { jobTitle?: string }) {
         </div>
 
         {status === "error" && (
-          <div className="flex items-center gap-2 text-sm text-red-500">
-            <AlertCircle size={16} />
-            <span>Something went wrong. Please try again.</span>
+          <div className="flex items-start gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <div className="flex flex-col">
+              <span className="font-semibold">Something went wrong.</span>
+              <span className="text-red-400/80">{errorMessage || "Please try again later."}</span>
+            </div>
           </div>
         )}
 

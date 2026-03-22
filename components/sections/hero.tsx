@@ -47,12 +47,19 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <MagneticWrapper strength={0.2}>
-              <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground">
-                <Link href="#features">Get Started</Link>
+              <Button asChild className="bg-gradient-to-tr from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+                <a href="https://play.google.com/store/apps/details?id=com.Android.stremini_ai&hl=en_IN" target="_blank" rel="noopener noreferrer">
+                  Download App
+                </a>
               </Button>
             </MagneticWrapper>
             <MagneticWrapper strength={0.2}>
               <Button asChild variant="outline">
+                <Link href="#features">Get Started</Link>
+              </Button>
+            </MagneticWrapper>
+            <MagneticWrapper strength={0.2}>
+              <Button asChild variant="secondary" className="bg-white/5 border border-white/10 text-white hover:bg-white/10">
                 <Link href="/demo">Demo</Link>
               </Button>
             </MagneticWrapper>

@@ -12,6 +12,7 @@ import {
     IconBriefcase,
     IconBook,
     IconDeviceImac,
+    IconDownload,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -72,6 +73,13 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
             href: "/demo",
             icon: (
                 <IconDeviceImac className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
+            ),
+        },
+        {
+            label: "Download App",
+            href: "https://play.google.com/store/apps/details?id=com.Android.stremini_ai&hl=en_IN",
+            icon: (
+                <IconDownload className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
             ),
         },
     ];
