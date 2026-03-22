@@ -10,7 +10,7 @@ export async function submitJobApplication(formData: {
   jobTitle?: string
 }) {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("job_applications")
       .insert([
         {
@@ -23,8 +23,6 @@ export async function submitJobApplication(formData: {
           status: "pending",
         },
       ])
-      .select()
-      .single()
 
     if (error) {
       console.error("Supabase insert error:", error)
@@ -33,7 +31,7 @@ export async function submitJobApplication(formData: {
 
     // Optional: Send email notification via EmailJS or similar here
     
-    return { success: true, data }
+    return { success: true }
   } catch (error) {
     console.error("Job application server action error:", error)
     return { 
