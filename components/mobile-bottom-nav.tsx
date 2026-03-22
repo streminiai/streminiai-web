@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Download, Users, ImageIcon, Info, BookOpen } from "lucide-react"
+import { Home, Download, Users, Info, BookOpen } from "lucide-react"
 import { motion } from "framer-motion"
 
 const items = [
@@ -30,7 +30,7 @@ export function MobileBottomNav() {
           />
         </svg>
         {/* Mask to clean bottom line */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-955/80 translate-y-[0.5px]" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-950/80 translate-y-[0.5px]" />
       </div>
 
       <div className="mx-auto grid max-w-3xl grid-cols-5 px-2 relative z-10 h-16 items-center">
