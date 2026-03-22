@@ -16,38 +16,52 @@ export function MobileBottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 md:hidden">
-      {/* Custom Bump Background */}
-      <div className="absolute inset-x-0 bottom-0 h-16 bg-background/95 backdrop-blur-xl border-t border-border" />
-      <div className="absolute bottom-[16px] left-1/2 -translate-x-1/2 w-24 h-12">
-        <svg viewBox="0 0 100 50" className="w-full h-full fill-background/95 stroke-border" style={{ strokeWidth: '1px', filter: 'drop-shadow(0 -1px 0px rgba(255,255,255,0.1))' }}>
-          <path d="M0 50 Q25 50 25 25 A25 25 0 0 1 75 25 Q75 50 100 50" fill="currentColor" className="text-background/95" />
-          <path d="M25 25 A25 25 0 0 1 75 25" fill="none" className="stroke-border" strokeWidth="1" />
+    <nav className="fixed inset-x-0 bottom-0 z-50 md:hidden pb-[env(safe-area-inset-bottom)]">
+      {/* Background with Glassmorphism */}
+      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-2xl border-t border-white/10" />
+      
+      {/* Smooth Bump Shape */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[24px] w-32 h-10 pointer-events-none">
+        <svg viewBox="0 0 100 40" className="w-full h-full" preserveAspectRatio="none">
+          <path 
+            d="M0 40 C20 40 20 0 50 0 C80 0 80 40 100 40" 
+            className="fill-slate-950/80 stroke-white/10"
+            strokeWidth="1"
+          />
         </svg>
+        {/* Mask to clean bottom line */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-955/80 translate-y-[0.5px]" />
       </div>
 
-      <div className="mx-auto grid max-w-3xl grid-cols-5 px-2 py-3 relative z-10 h-16 items-center">
+      <div className="mx-auto grid max-w-3xl grid-cols-5 px-2 relative z-10 h-16 items-center">
         {items.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
           
           if (item.isFeatured) {
             return (
-              <div key={item.label} className="col-span-1 flex justify-center -translate-y-6">
+              <div key={item.label} className="col-span-1 flex justify-center -translate-y-8">
                 <Link
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
                   className="relative flex flex-col items-center justify-center outline-none group"
                 >
+                  {/* Outer Glow */}
+                  <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-xl group-hover:bg-cyan-500/40 transition-colors" />
+                  
                   <motion.div 
-                    className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#00f2ff] via-[#0062ff] to-[#0044ff] text-white shadow-[0_0_20px_rgba(0,114,255,0.5)] group-hover:shadow-[0_0_30px_rgba(0,114,255,0.8)] group-active:scale-95 transition-shadow border border-white/20"
-                    animate={{ y: [0, -4, 0] }}
+                    className="relative flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-700 text-white shadow-[0_0_30px_rgba(0,180,255,0.6)] group-hover:shadow-[0_0_45px_rgba(0,180,255,0.9)] group-active:scale-90 transition-all border-2 border-white/20"
+                    animate={{ y: [0, -5, 0] }}
                     transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                   >
-                    <Icon size={28} strokeWidth={2.5} />
+                    <Icon size={32} strokeWidth={2.5} className="drop-shadow-lg" />
+                    
+                    {/* Inner Shine */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none" />
                   </motion.div>
-                  <span className="text-[10px] font-bold text-[#00f2ff] mt-2 filter drop-shadow-[0_0_4px_rgba(0,242,255,0.5)] uppercase tracking-wider">{item.label}</span>
+                  
+                  <span className="text-[9px] font-black text-cyan-400 mt-3 filter drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] uppercase tracking-[0.2em]">{item.label}</span>
                 </Link>
               </div>
             )
@@ -59,12 +73,20 @@ export function MobileBottomNav() {
               href={item.href}
               target={item.external ? "_blank" : undefined}
               rel={item.external ? "noopener noreferrer" : undefined}
-              className={`flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`flex flex-col items-center justify-center gap-1.5 rounded-xl p-2 transition-all relative group ${isActive ? "text-cyan-400" : "text-slate-400 hover:text-white"
                 }`}
               aria-current={isActive ? "page" : undefined}
             >
-              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              {isActive && (
+                <motion.div 
+                  layoutId="activeTab"
+                  className="absolute inset-0 bg-white/5 rounded-xl -z-1"
+                />
+              )}
+              <Icon size={22} strokeWidth={isActive ? 2.5 : 2} className={isActive ? "drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" : ""} />
+              <span className={`text-[10px] font-bold ${isActive ? "opacity-100" : "opacity-70 group-hover:opacity-100"}`}>
+                {item.label}
+              </span>
             </Link>
           )
         })}
