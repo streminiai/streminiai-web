@@ -102,6 +102,28 @@ export default function CareersPage() {
           </div>
         </div>
       </div>
+
+      {/* Contact Section */}
+      <div className="mt-24 text-center border-t border-white/10 pt-16">
+        <h2 
+          className="text-5xl md:text-7xl font-bold text-white mb-6 uppercase tracking-wider relative inline-block transition-transform hover:scale-105 duration-300"
+          style={{ 
+            textShadow: "-3px 0px 0px #00f2ff, 3px 0px 0px #ff3366" 
+          }}
+        >
+          Contact
+        </h2>
+        <p className="text-muted-foreground max-w-xl mx-auto text-lg mt-4">
+          Have specific questions about our open roles or the interview process? 
+          <br/> Reach out to our talent team directly.
+        </p>
+        <a 
+          href="mailto:careers@stremini.site" 
+          className="inline-block mt-8 rounded-2xl bg-white/5 border border-white/10 px-8 py-4 text-white hover:bg-white/10 transition-colors font-semibold"
+        >
+          careers@stremini.site
+        </a>
+      </div>
     </div>
   )
 }
