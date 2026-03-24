@@ -58,10 +58,10 @@ export default function CareersPage() {
                   key={job.id}
                   className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:bg-white/[0.08] hover:border-white/20"
                 >
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col gap-6">
                     <div>
                       <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">{job.title}</h3>
-                      <div className="mt-1 flex flex-wrap gap-3 text-sm text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap gap-3 text-sm text-muted-foreground border-b border-white/10 pb-4">
                         <span className="flex items-center gap-1">
                           <Globe className="h-4 w-4" /> {job.location}
                         </span>
@@ -72,12 +72,19 @@ export default function CareersPage() {
                           <Zap className="h-4 w-4" /> {job.department}
                         </span>
                       </div>
+                      
+                      {job.description && (
+                        <div className="mt-4 text-sm leading-relaxed text-zinc-300 whitespace-pre-wrap">
+                          {job.description}
+                        </div>
+                      )}
                     </div>
+                    
                     <button 
                       onClick={() => {
                         document.getElementById("apply-form")?.scrollIntoView({ behavior: "smooth" })
                       }}
-                      className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-black transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
+                      className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-black transition-transform hover:scale-105 active:scale-95 whitespace-nowrap self-start"
                     >
                       Apply Now
                     </button>

@@ -55,6 +55,11 @@ export function Hero() {
             </MagneticWrapper>
 
             <MagneticWrapper strength={0.2}>
+              <Button asChild variant="outline">
+                <Link href="/careers">Careers</Link>
+              </Button>
+            </MagneticWrapper>
+            <MagneticWrapper strength={0.2}>
               <Button asChild variant="secondary" className="bg-white/5 border border-white/10 text-white hover:bg-white/10">
                 <Link href="/demo">Demo</Link>
               </Button>
