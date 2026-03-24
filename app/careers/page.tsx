@@ -118,10 +118,10 @@ export default function CareersPage() {
           <br/> Reach out to our talent team directly.
         </p>
         <a 
-          href="mailto:careers@stremini.site" 
+          href="mailto:Mail@stremini.site" 
           className="inline-block mt-8 rounded-2xl bg-white/5 border border-white/10 px-8 py-4 text-white hover:bg-white/10 transition-colors font-semibold"
         >
-          careers@stremini.site
+          Mail@stremini.site
         </a>
       </div>
     </div>
