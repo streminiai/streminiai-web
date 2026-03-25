@@ -7,7 +7,7 @@ const qas = [
   },
   {
     q: "Why is it better?",
-    a: "Other AI are chat based. Stremini is context-aware, screen-aware, and action-capable—It observes, detects risk, and executes tasks across apps, and doesn't save users' sensitive data.",
+    a: "Other AI are chat based. Stremini is action-capable—It detects risk, and executes tasks across apps, and doesn't save users' sensitive data.",
   },
   {
     q: "Does Stremini work in real time?",
