@@ -16,7 +16,6 @@ const staticTeamData: Record<string, { title: string; members: { name: string; r
   "co-founder": {
     title: "Co-Founders",
     members: [
-      { name: "Mehridin Yo'ldoshev", role: "Co-Founder" },
       { name: "Vishwajeet", role: "Co-Founder" },
       { name: "Vector", role: "Co-Founder" },
       { name: "Energy", role: "Co-Founder" },
