@@ -1,7 +1,7 @@
 import { Hero } from "@/components/sections/hero"
 import { HowItWorks } from "@/components/sections/how-it-works"
 import { Features } from "@/components/sections/features"
-import { Gallery } from "@/components/sections/gallery"
+
 import { Pricing } from "@/components/sections/pricing"
 import { Testimonials } from "@/components/sections/testimonials"
 import { About } from "@/components/sections/about"
@@ -23,9 +23,7 @@ export default function Page() {
         <Features />
       </section>
 
-      <section id="gallery" aria-label="Gallery" className="py-16 md:py-24">
-        <Gallery />
-      </section>
+
 
       <section id="pricing" aria-label="Pricing" className="py-16 md:py-24">
         <Pricing />

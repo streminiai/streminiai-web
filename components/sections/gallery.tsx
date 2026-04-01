@@ -5,9 +5,11 @@ import { Images } from "lucide-react"
 import { FocusCards } from "@/components/ui/focus-cards"
 
 const galleryItems = [
-  { title: "Scam Detection Demo", src: "/gallery-1.jpg" },
-  { title: "Chatbot", src: "/gallery-2.jpg" },
-  { title: "AI Keyboard", src: "/gallery-3.jpg" },
+  { title: "Home View", src: "/gallery-11.jpg" },
+  { title: "Smart Chat", src: "/gallery-12.jpg" },
+  { title: "Website Analysis", src: "/gallery-13.jpg" },
+  { title: "Image Generation", src: "/gallery-14.jpg" },
+  { title: "AI Assistant", src: "/gallery-15.jpg" },
 ]
 
 export function Gallery() {

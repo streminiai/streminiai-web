@@ -1,6 +1,6 @@
-# Stremini WebsiStatus: Launched 🚀
+# Stremini Website Status: Launched 🚀
 Overview: Stremini is a revolutionary, intent-aware AI assistant designed to float seamlessly within your digital environment. It provides real-time security alerts and productivity enhancements based on user intent, all while maintaining a premium, futuristic aesthetic.
-ractive elements to provide a "wow" factor for users.
+Interactive elements to provide a "wow" factor for users.
 
 ## Project Documentation
 
@@ -21,17 +21,15 @@ ractive elements to provide a "wow" factor for users.
     - **Page Transitions**: Smooth entry/exit animations for all routes.
     - **Glow Borders**: Hover-activated glowing borders on feature cards.
 
-## Current Implementation: Interactive Features
-The goal was to enhance the website with premium interactive features to create a more engaging experience.
+## Current Implementation: Navigation and Layout Updates
+The goal was to optimize the page length by hiding the Gallery section from the home page scroll, and making it exclusively accessible via its own tab, replacing the "About" tab.
 
 ### Steps Taken:
-1. **Setup**: Created core interactive components using `framer-motion`.
-2. **Cursor**: Implemented `CursorOrb` for a custom, glowing cursor experience.
-3. **Interactivity**: Created `MagneticWrapper` to add magnetic pull to buttons and icons.
-4. **Transitions**: Implemented `PageTransition` for smooth route changes.
-5. **Styling**: Updated `globals.css` with utility classes for glassmorphism and glowing borders.
-6. **Integration**: Applied these features to the Hero section and Features grid.
-7. **Verification**: Confirmed with successful linting and production build.
+1. **Homepage Layout**: Removed the inline Gallery section from `app/page.tsx` to reduce the scroll length.
+2. **Navigation Updates**: Replaced the "About" navigation link with a dedicated "Gallery" link in `components/mobile-bottom-nav.tsx`, `components/navbar-top.tsx`, and `components/sidebar-demo.tsx`. Uses the `ImageIcon` from Lucide to ensure a polished look.
+3. **Refactoring**: Cleaned up unused imports such as `IconInfoCircle` to ensure an optimal build.
+4. **Gallery Images**: Updated the `/gallery` component (`components/sections/gallery.tsx`) to display the new set of images (`gallery-11.jpg` through `gallery-15.jpg`).
+5. **Verification**: The Gallery is now explicitly accessed via the `/gallery` route and no longer clutters the homepage layout.
 
 ## Planned: AI Backend Integration
 Integrating the Stremini AI Backend to enable advanced AI features like chat, keyboard automation, and image generation.

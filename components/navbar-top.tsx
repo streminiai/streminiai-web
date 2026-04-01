@@ -22,7 +22,6 @@ export function NavbarTop() {
             ["Home", "/"],
             ["Features", "/features"],
             ["Gallery", "/gallery"],
-            ["About", "/about"],
             ["Team", "/team"],
           ].map(([label, href]) => (
             <Link key={label} href={href} className="text-sm hover:text-primary whitespace-nowrap">

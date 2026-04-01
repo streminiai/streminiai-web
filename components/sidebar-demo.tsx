@@ -7,7 +7,6 @@ import {
     IconHome,
     IconSparkles,
     IconPhoto,
-    IconInfoCircle,
     IconUsers,
     IconBriefcase,
     IconBook,
@@ -40,13 +39,7 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
                 <IconPhoto className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
             ),
         },
-        {
-            label: "About",
-            href: "/about",
-            icon: (
-                <IconInfoCircle className="h-5 w-5 shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors" />
-            ),
-        },
+
         {
             label: "Team",
             href: "/team",

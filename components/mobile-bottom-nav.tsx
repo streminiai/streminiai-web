@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Download, Users, Info, BookOpen } from "lucide-react"
+import { Home, Download, Users, ImageIcon, BookOpen } from "lucide-react"
 import { motion } from "framer-motion"
 
 const items = [
@@ -9,7 +9,7 @@ const items = [
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Download", href: "https://play.google.com/store/apps/details?id=com.Android.stremini_ai&hl=en_IN", icon: Download, external: true, isFeatured: true },
   { label: "Team", href: "/team", icon: Users },
-  { label: "About", href: "/about", icon: Info },
+  { label: "Gallery", href: "/gallery", icon: ImageIcon },
 ]
 
 export function MobileBottomNav() {
