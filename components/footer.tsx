@@ -37,6 +37,11 @@ export function Footer() {
                 Contact
               </Link>
             </li>
+            <li>
+              <Link href="/team?staff=login" className="text-primary hover:text-primary/80 transition-colors">
+                Staff Login
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
