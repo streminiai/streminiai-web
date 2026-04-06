@@ -2,7 +2,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import bcrypt from 'bcryptjs'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -33,36 +32,45 @@ export async function PUT(
 ) {
   try {
     const { id } = await params
-    const { username, password, updates } = await req.json()
+    const { email, password, updates } = await req.json()
 
-    if (!username || !password || !updates) {
+    if (!email || !password || !updates) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const supabase = getAdminClient()
+    // 1. Authenticate with actual Supabase Auth (auth.users)
+    const authClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    
+    const { data: authData, error: authError } = await authClient.auth.signInWithPassword({
+      email,
+      password
+    })
 
-    // Fetch the member to verify credentials
-    const { data: member, error: fetchErr } = await supabase
+    if (authError || !authData.user) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid credentials.' }, { status: 401 })
+    }
+
+    const supabaseAdmin = getAdminClient()
+
+    // 1.5 Verify the logged-in email matches the profile they are trying to update
+    const { data: currentMember, error: fetchErr } = await supabaseAdmin
       .from('team_members')
-      .select('*')
+      .select('email')
       .eq('id', id)
       .single()
 
-    if (fetchErr || !member) {
-      return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+    if (fetchErr || !currentMember) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    // Auth: only the member themselves can update their profile
-    if (member.username?.toLowerCase() !== username.toLowerCase()) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (currentMember.email?.toLowerCase() !== email.toLowerCase()) {
+      return NextResponse.json({ error: 'Unauthorized: You can only edit your own profile.' }, { status: 403 })
     }
 
-    const valid = await bcrypt.compare(password, member.password_hash ?? '')
-    if (!valid) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Build the update payload with only allowed fields
+    // 2. Filter payload to only allowed fields
     const updatePayload: Record<string, unknown> = {}
     for (const field of ALLOWED_FIELDS) {
       if (updates[field] !== undefined) {
@@ -77,7 +85,7 @@ export async function PUT(
 
     updatePayload.updated_at = new Date().toISOString()
 
-    const { data: updated, error: updateErr } = await supabase
+    const { data: updated, error: updateErr } = await supabaseAdmin
       .from('team_members')
       .update(updatePayload)
       .eq('id', id)
@@ -86,10 +94,7 @@ export async function PUT(
 
     if (updateErr) throw updateErr
 
-    // Return updated member without sensitive fields
-    const safe = { ...updated }
-    delete (safe as Record<string, unknown>).password_hash
-    return NextResponse.json(safe)
+    return NextResponse.json(updated)
   } catch (err) {
     console.error('[PUT /api/team/[id]]', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

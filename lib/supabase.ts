@@ -44,7 +44,7 @@ export type TeamMember = {
     bio: string | null
     location: string | null
     skills: string[] | null
-    username: string | null
+    email: string | null
     color: string | null
     color_key: string | null
     avatar_url: string | null
