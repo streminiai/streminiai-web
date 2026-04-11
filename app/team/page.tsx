@@ -242,23 +242,23 @@ function EnhancedTeamCard({ member }: { member: TeamMember }) {
 
 // ── Login Modal ──
 function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (_member: TeamMember, _pw: string) => void }) {
-  const [email, setEmail] = useState("")
+  const [user, setUser] = useState("")
   const [pass, setPass] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   async function doLogin() {
-    if (!email || !pass) return
+    if (!user || !pass) return
     setLoading(true)
     setError("")
     try {
       const res = await fetch("/api/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: pass }),
+        body: JSON.stringify({ username: user, password: pass }),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error || "Incorrect email or password."); setLoading(false); return }
+      if (!res.ok) { setError(data.error || "Incorrect username or password."); setLoading(false); return }
       onSuccess(data, pass)
     } catch {
       setError("Network error. Try again.")
@@ -293,9 +293,9 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (_
             <p className="text-sm text-muted-foreground">Sign in to edit your team profile.</p>
 
             <div>
-              <label className="block text-xs font-semibold tracking-wider uppercase text-muted-foreground mb-1.5">Email</label>
+              <label className="block text-xs font-semibold tracking-wider uppercase text-muted-foreground mb-1.5">Username</label>
               <div className="relative">
-                <input type="email" placeholder="e.g. founder@stremini.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && doLogin()}
+                <input type="text" placeholder="e.g. cipher" value={user} onChange={(e) => setUser(e.target.value)} onKeyDown={e => e.key === "Enter" && doLogin()}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-transparent text-foreground focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all" />
                 <Megaphone className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground" />
               </div>
@@ -351,7 +351,7 @@ function EditPanel({ member, authPassword, onClose, onSaved }: {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: member.email,
+          username: member.username,
           password: authPassword,
           updates: {
             name, bio, location,

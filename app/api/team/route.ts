@@ -37,41 +37,33 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json()
+    const { username, password } = await req.json()
 
-    if (!email || !password) {
+    if (!username || !password) {
       return NextResponse.json({ error: 'Missing credentials' }, { status: 400 })
     }
 
-    // 1. Authenticate with actual Supabase Auth (auth.users)
-    const authClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-    
-    const { data: authData, error: authError } = await authClient.auth.signInWithPassword({
-      email,
-      password
-    })
-
-    if (authError || !authData.user) {
-      return NextResponse.json({ error: 'Invalid credentials. Please use your standard Stremini account.' }, { status: 401 })
-    }
-
-    // 2. Fetch their team member profile
-    const supabaseAdmin = getAdminClient()
-    const { data: member, error } = await supabaseAdmin
+    const supabase = getAdminClient()
+    const { data: member, error } = await supabase
       .from('team_members')
       .select('*')
-      .ilike('email', email)
+      .ilike('username', username)
       .eq('is_active', true)
       .single()
 
     if (error || !member) {
-      return NextResponse.json({ error: 'Logged in successfully, but no active team profile is linked to this email.' }, { status: 403 })
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    return NextResponse.json(member)
+    // Verify password directly (plain text as requested)
+    if (member.password !== password) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+    }
+
+    // Strip sensitive fields
+    const safe = { ...member }
+    delete (safe as Record<string, unknown>).password
+    return NextResponse.json(safe)
   } catch (err) {
     console.error('[POST /api/team]', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

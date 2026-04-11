@@ -203,6 +203,7 @@ function TeamMemberModal({
 }) {
     const [formData, setFormData] = useState({
         name: member?.name || "",
+        username: member?.username || "",
         role: member?.role || "",
         category: member?.category || "developer",
         image_url: member?.image_url || "",
@@ -304,6 +305,17 @@ function TeamMemberModal({
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
                             required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-slate-400 mb-2">Username</label>
+                        <input
+                            type="text"
+                            value={formData.username}
+                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                            placeholder="e.g. cipher"
                         />
                     </div>
 

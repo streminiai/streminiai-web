@@ -6,12 +6,15 @@ ALTER TABLE public.team_members
   ADD COLUMN IF NOT EXISTS bio TEXT DEFAULT '',
   ADD COLUMN IF NOT EXISTS location TEXT DEFAULT '',
   ADD COLUMN IF NOT EXISTS skills TEXT[] DEFAULT '{}',
-  ADD COLUMN IF NOT EXISTS email TEXT UNIQUE,
+  ADD COLUMN IF NOT EXISTS username TEXT UNIQUE,
+  ADD COLUMN IF NOT EXISTS password TEXT,
   ADD COLUMN IF NOT EXISTS color TEXT DEFAULT 'linear-gradient(135deg,#0071e3,#34aadc)',
   ADD COLUMN IF NOT EXISTS color_key TEXT DEFAULT 'blue',
   ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT '',
   ADD COLUMN IF NOT EXISTS website_url TEXT DEFAULT '',
-  ADD COLUMN IF NOT EXISTS is_founder BOOLEAN DEFAULT false;
+  ADD COLUMN IF NOT EXISTS is_founder BOOLEAN DEFAULT false,
+  DROP COLUMN IF EXISTS email,
+  DROP COLUMN IF EXISTS password_hash;
 
 -- Create index on username for fast login lookups
 CREATE INDEX IF NOT EXISTS idx_team_members_username ON public.team_members(username);
@@ -25,4 +28,4 @@ CREATE INDEX IF NOT EXISTS idx_team_members_username ON public.team_members(user
 -- You can generate them at https://bcrypt-generator.com/ or via the API.
 --
 -- Example (password: kyzor2026):
--- UPDATE public.team_members SET username = 'kyzor', password_hash = '$2a$10$...' WHERE name = 'KRISHNA ARORA';
+-- UPDATE public.team_members SET username = 'kyzor', password = 'myplaintextpassword123' WHERE name = 'KRISHNA ARORA';
