@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Download, Users, ImageIcon, BookOpen } from "lucide-react"
+import { Home, Download, ImageIcon, BookOpen, Briefcase } from "lucide-react"
 import { motion } from "framer-motion"
 
 const items = [
@@ -9,6 +9,7 @@ const items = [
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Download", href: "https://play.google.com/store/apps/details?id=com.Android.stremini_ai&hl=en_IN", icon: Download, external: true, isFeatured: true },
   // { label: "Team", href: "/team", icon: Users },
+  { label: "Careers", href: "/careers", icon: Briefcase },
   { label: "Gallery", href: "/gallery", icon: ImageIcon },
 ]
 
@@ -33,7 +34,7 @@ export function MobileBottomNav() {
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-neutral-900/95 translate-y-[0.5px]" />
       </div>
 
-      <div className="mx-auto grid max-w-3xl grid-cols-4 px-2 relative z-10 h-16 items-center">
+      <div className="mx-auto grid max-w-3xl grid-cols-5 px-2 relative z-10 h-16 items-center">
         {items.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))

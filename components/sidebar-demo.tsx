@@ -7,7 +7,6 @@ import {
     IconHome,
     IconSparkles,
     IconPhoto,
-    IconUsers,
     IconBriefcase,
     IconBook,
     IconDeviceImac,
